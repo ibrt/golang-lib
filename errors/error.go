@@ -132,7 +132,9 @@ func Assertf(cond bool, format string, options ...Option) {
 
 // IgnoreClose calls Close on the given io.Closer, ignoring the returned error. Handy for the defer Close pattern.
 func IgnoreClose(c io.Closer) {
-	_ = c.Close()
+	if c != nil {
+		_ = c.Close()
+	}
 }
 
 // Unwrap undoes Wrap, returning the original error.
