@@ -1,6 +1,7 @@
 package stringz
 
 import (
+	"fmt"
 	"sort"
 )
 
@@ -85,6 +86,21 @@ func MapToSlice(m map[string]struct{}) []string {
 		s = append(s, v)
 	}
 	return s
+}
+
+// SwapMap returns a copy of the map with keys and values swapped.
+// Fails in case of duplicate values.
+func SwapMap(m map[string]string) (map[string]string, error) {
+	i := make(map[string]string, len(m))
+
+	for k, v := range m {
+		if _, ok := i[v]; ok {
+			return nil, fmt.Errorf("duplicate value: %v", v)
+		}
+		i[v] = k
+	}
+
+	return i, nil
 }
 
 // SafeIndex returns "s[i]" if possible, an empty string otherwise.

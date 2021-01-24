@@ -62,6 +62,33 @@ func TestMapToSlice(t *testing.T) {
 	require.Equal(t, map[string]struct{}{"1": {}, "2": {}}, stringz.SliceToMap(stringz.MapToSlice(map[string]struct{}{"1": {}, "2": {}})))
 }
 
+func TestSwapMap(t *testing.T) {
+	swap, err := stringz.SwapMap(map[string]string{
+		"k1": "v1",
+		"k2": "v2",
+	})
+	require.NoError(t, err)
+	require.Equal(t,
+		map[string]string{
+			"v1": "k1",
+			"v2": "k2",
+		}, swap)
+
+	swap, err = stringz.SwapMap(map[string]string{})
+	require.NoError(t, err)
+	require.Equal(t, map[string]string{}, swap)
+
+	swap, err = stringz.SwapMap(nil)
+	require.NoError(t, err)
+	require.Equal(t, map[string]string{}, swap)
+
+	_, err = stringz.SwapMap(map[string]string{
+		"k1": "v1",
+		"k2": "v1",
+	})
+	require.EqualError(t, err, "duplicate value: v1")
+}
+
 func TestSafeIndex(t *testing.T) {
 	require.Equal(t, "", stringz.SafeIndex(nil, 0))
 	require.Equal(t, "", stringz.SafeIndex(nil, 1))
