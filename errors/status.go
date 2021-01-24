@@ -109,7 +109,7 @@ func GetStatusCode(err error) StatusCode {
 
 // GetStatusCode gets the status code from the error, or InternalServerError if not set.
 func GetStatusCodeOr500(err error) StatusCode {
-	if e, ok := err.(*wrappedError); ok {
+	if e, ok := err.(*wrappedError); ok && e.statusCode != 0 {
 		return e.statusCode
 	}
 	return StatusInternalServerError

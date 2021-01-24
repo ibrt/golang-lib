@@ -147,8 +147,9 @@ func TestStatusCode(t *testing.T) {
 	err = errors.Errorf("test error", errors.StatusNotFound)
 	require.NotNil(t, err)
 	require.Equal(t, errors.StatusNotFound, errors.GetStatusCode(err))
+	require.Equal(t, errors.StatusNotFound, errors.GetStatusCodeOr500(err))
 	statusCode := errors.StatusNotFound
-	require.Equal(t, 500, statusCode.Int())
+	require.Equal(t, 404, statusCode.Int())
 	require.Equal(t, "Not Found", statusCode.String())
 	err = errors.Errorf("test error", statusCode)
 	require.NotNil(t, err)
