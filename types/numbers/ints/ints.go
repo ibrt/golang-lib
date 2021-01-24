@@ -101,3 +101,19 @@ func MapToSlice(m map[int]struct{}) []int {
 	}
 	return s
 }
+
+// SafeIndex returns "s[i]" if possible, an 0 otherwise.
+func SafeIndex(s []int, i int) int {
+	if s == nil || i < 0 || i >= len(s) {
+		return 0
+	}
+	return s[i]
+}
+
+// SafeIndexPtr returns "s[i]" if possible, an nil otherwise.
+func SafeIndexPtr(s []int, i int) *int {
+	if s == nil || i < 0 || i >= len(s) {
+		return nil
+	}
+	return Ptr(s[i])
+}

@@ -95,7 +95,7 @@ func SafeIndex(s []string, i int) string {
 	return s[i]
 }
 
-// SafeIndex returns "s[i]" if possible, an nil otherwise.
+// SafeIndexPtr returns "s[i]" if possible, an nil otherwise.
 func SafeIndexPtr(s []string, i int) *string {
 	if s == nil || i < 0 || i >= len(s) {
 		return nil

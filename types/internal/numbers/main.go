@@ -114,6 +114,22 @@ func MapToSlice(m map[{{ .Type }}]struct{}) []{{ .Type }} {
 	}
 	return s
 }
+
+// SafeIndex returns "s[i]" if possible, an 0 otherwise.
+func SafeIndex(s []{{ .Type }}, i int) {{ .Type }} {
+	if s == nil || i < 0 || i >= len(s) {
+		return 0
+	}
+	return s[i]
+}
+
+// SafeIndexPtr returns "s[i]" if possible, an nil otherwise.
+func SafeIndexPtr(s []{{ .Type }}, i int) *{{ .Type }} {
+	if s == nil || i < 0 || i >= len(s) {
+		return nil
+	}
+	return Ptr(s[i])
+}
 `))
 
 var testTpl = template.Must(template.New("").Parse(`package {{ .Pkg }}_test
@@ -190,6 +206,30 @@ func TestMapToSlice(t *testing.T) {
 	require.Equal(t, []{{ .Type }}{}, {{ .Pkg }}.MapToSlice(map[{{ .Type }}]struct{}{}))
 	require.Equal(t, []{{ .Type }}{1}, {{ .Pkg }}.MapToSlice(map[{{ .Type }}]struct{}{1: {}}))
 	require.Equal(t, map[{{ .Type }}]struct{}{1: {}, 2: {}}, {{ .Pkg }}.SliceToMap({{ .Pkg }}.MapToSlice(map[{{ .Type }}]struct{}{1: {}, 2: {}})))
+}
+
+func TestSafeIndex(t *testing.T) {
+	require.Equal(t, {{.Type}}(0), {{ .Pkg }}.SafeIndex(nil, 0))
+	require.Equal(t, {{.Type}}(0), {{ .Pkg }}.SafeIndex(nil, 1))
+	require.Equal(t, {{.Type}}(0), {{ .Pkg }}.SafeIndex(nil, -1))
+	require.Equal(t, {{.Type}}(0), {{ .Pkg }}.SafeIndex([]{{.Type}}{}, 0))
+	require.Equal(t, {{.Type}}(0), {{ .Pkg }}.SafeIndex([]{{.Type}}{}, 1))
+	require.Equal(t, {{.Type}}(0), {{ .Pkg }}.SafeIndex([]{{.Type}}{}, -1))
+	require.Equal(t, {{.Type}}(1), {{ .Pkg }}.SafeIndex([]{{.Type}}{1}, 0))
+	require.Equal(t, {{.Type}}(0), {{ .Pkg }}.SafeIndex([]{{.Type}}{1}, 1))
+	require.Equal(t, {{.Type}}(0), {{ .Pkg }}.SafeIndex([]{{.Type}}{1}, -1))
+}
+
+func TestSafeIndexPtr(t *testing.T) {
+	require.Nil(t, {{ .Pkg }}.SafeIndexPtr(nil, 0))
+	require.Nil(t, {{ .Pkg }}.SafeIndexPtr(nil, 1))
+	require.Nil(t, {{ .Pkg }}.SafeIndexPtr(nil, -1))
+	require.Nil(t, {{ .Pkg }}.SafeIndexPtr([]{{.Type}}{}, 0))
+	require.Nil(t, {{ .Pkg }}.SafeIndexPtr([]{{.Type}}{}, 1))
+	require.Nil(t, {{ .Pkg }}.SafeIndexPtr([]{{.Type}}{}, -1))
+	require.Equal(t, {{ .Pkg }}.Ptr(1), {{ .Pkg }}.SafeIndexPtr([]{{.Type}}{1}, 0))
+	require.Nil(t, {{ .Pkg }}.SafeIndexPtr([]{{.Type}}{1}, 1))
+	require.Nil(t, {{ .Pkg }}.SafeIndexPtr([]{{.Type}}{1}, -1))
 }
 `))
 

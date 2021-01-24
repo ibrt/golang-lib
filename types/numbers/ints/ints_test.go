@@ -73,3 +73,27 @@ func TestMapToSlice(t *testing.T) {
 	require.Equal(t, []int{1}, ints.MapToSlice(map[int]struct{}{1: {}}))
 	require.Equal(t, map[int]struct{}{1: {}, 2: {}}, ints.SliceToMap(ints.MapToSlice(map[int]struct{}{1: {}, 2: {}})))
 }
+
+func TestSafeIndex(t *testing.T) {
+	require.Equal(t, int(0), ints.SafeIndex(nil, 0))
+	require.Equal(t, int(0), ints.SafeIndex(nil, 1))
+	require.Equal(t, int(0), ints.SafeIndex(nil, -1))
+	require.Equal(t, int(0), ints.SafeIndex([]int{}, 0))
+	require.Equal(t, int(0), ints.SafeIndex([]int{}, 1))
+	require.Equal(t, int(0), ints.SafeIndex([]int{}, -1))
+	require.Equal(t, int(1), ints.SafeIndex([]int{1}, 0))
+	require.Equal(t, int(0), ints.SafeIndex([]int{1}, 1))
+	require.Equal(t, int(0), ints.SafeIndex([]int{1}, -1))
+}
+
+func TestSafeIndexPtr(t *testing.T) {
+	require.Nil(t, ints.SafeIndexPtr(nil, 0))
+	require.Nil(t, ints.SafeIndexPtr(nil, 1))
+	require.Nil(t, ints.SafeIndexPtr(nil, -1))
+	require.Nil(t, ints.SafeIndexPtr([]int{}, 0))
+	require.Nil(t, ints.SafeIndexPtr([]int{}, 1))
+	require.Nil(t, ints.SafeIndexPtr([]int{}, -1))
+	require.Equal(t, ints.Ptr(1), ints.SafeIndexPtr([]int{1}, 0))
+	require.Nil(t, ints.SafeIndexPtr([]int{1}, 1))
+	require.Nil(t, ints.SafeIndexPtr([]int{1}, -1))
+}
