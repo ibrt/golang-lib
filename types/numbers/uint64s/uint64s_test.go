@@ -1,14 +1,11 @@
 package uint64s_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/ibrt/golang-lib/types/numbers/uint64s"
 	"github.com/stretchr/testify/require"
 )
-
-const Max = 1<<(uint64s.BitSize-1) - 1
 
 func TestPtr(t *testing.T) {
 	p := uint64s.Ptr(0)
@@ -44,39 +41,12 @@ func TestValDef(t *testing.T) {
 	require.Equal(t, uint64(1), uint64s.ValDef(uint64s.Ptr(1), 1))
 }
 
-func TestParseDec(t *testing.T) {
-	v, err := uint64s.ParseDec("10")
+func TestParse(t *testing.T) {
+	v, err := uint64s.Parse("10")
 	require.NoError(t, err)
 	require.Equal(t, uint64(10), v)
-	v, err = uint64s.ParseDec(fmt.Sprintf("%d", Max))
-	require.NoError(t, err)
-	require.Equal(t, uint64(Max), v)
-	_, err = uint64s.ParseDec("")
+	_, err = uint64s.Parse("")
 	require.Error(t, err)
-	_, err = uint64s.ParseDec("A")
+	_, err = uint64s.Parse("A")
 	require.Error(t, err)
-}
-
-func TestParseHex(t *testing.T) {
-	v, err := uint64s.ParseHex("20")
-	require.NoError(t, err)
-	require.Equal(t, uint64(0x20), v)
-	v, err = uint64s.ParseHex(fmt.Sprintf("%x", Max))
-	require.NoError(t, err)
-	require.Equal(t, uint64(Max), v)
-	v, err = uint64s.ParseHex(fmt.Sprintf("%X", Max))
-	require.NoError(t, err)
-	require.Equal(t, uint64(Max), v)
-	_, err = uint64s.ParseHex("")
-	require.Error(t, err)
-}
-
-func TestStrDec(t *testing.T) {
-	require.Equal(t, "10", uint64s.StrDec(10))
-}
-
-func TestStrHex(t *testing.T) {
-	require.Equal(t, "10", uint64s.StrHex(0x10))
-	require.Equal(t, "a", uint64s.StrHex(0xA))
-	require.Equal(t, "11", uint64s.StrHex(0x11))
 }

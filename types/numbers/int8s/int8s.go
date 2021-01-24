@@ -1,7 +1,6 @@
 package int8s
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -48,29 +47,10 @@ func ValDef(v *int8, def int8) int8 {
 }
 
 // ParseDec parses a string as base 10 int8.
-func ParseDec(v string) (int8, error) {
+func Parse(v string) (int8, error) {
 	p, err := strconv.ParseInt(v, 10, BitSize)
 	if err != nil {
 		return 0, err
 	}
 	return (int8)(p), nil
-}
-
-// ParseHex parses a string as base 16 int8.
-func ParseHex(v string) (int8, error) {
-	p, err := strconv.ParseInt(v, 16, BitSize)
-	if err != nil {
-		return 0, err
-	}
-	return (int8)(p), nil
-}
-
-// StrDec interprets the value as base 10 and converts it to string.
-func StrDec(v int8) string {
-	return fmt.Sprintf("%d", v)
-}
-
-// StrHex interprets the value as base 16 and converts it to string.
-func StrHex(v int8) string {
-	return fmt.Sprintf("%x", v)
 }

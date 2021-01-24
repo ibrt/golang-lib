@@ -1,7 +1,6 @@
 package ints
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -48,29 +47,10 @@ func ValDef(v *int, def int) int {
 }
 
 // ParseDec parses a string as base 10 int.
-func ParseDec(v string) (int, error) {
+func Parse(v string) (int, error) {
 	p, err := strconv.ParseInt(v, 10, BitSize)
 	if err != nil {
 		return 0, err
 	}
 	return (int)(p), nil
-}
-
-// ParseHex parses a string as base 16 int.
-func ParseHex(v string) (int, error) {
-	p, err := strconv.ParseInt(v, 16, BitSize)
-	if err != nil {
-		return 0, err
-	}
-	return (int)(p), nil
-}
-
-// StrDec interprets the value as base 10 and converts it to string.
-func StrDec(v int) string {
-	return fmt.Sprintf("%d", v)
-}
-
-// StrHex interprets the value as base 16 and converts it to string.
-func StrHex(v int) string {
-	return fmt.Sprintf("%x", v)
 }

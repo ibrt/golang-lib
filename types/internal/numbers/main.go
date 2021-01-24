@@ -14,7 +14,6 @@ import (
 var tpl = template.Must(template.New("").Parse(`package {{ .Pkg }}
 
 import (
-	"fmt"
 	"strconv"
 )
 
@@ -61,45 +60,23 @@ func ValDef(v *{{ .Type }}, def {{ .Type }}) {{ .Type }} {
 }
 
 // ParseDec parses a string as base 10 {{ .Type }}.
-func ParseDec(v string) ({{ .Type }}, error) {
-	p, err := strconv.Parse{{ if .IsSigned }}Int{{ else }}Uint{{ end }}(v, 10, BitSize)
+func Parse(v string) ({{ .Type }}, error) {
+	p, err := {{ .ParseCall }}
 	if err != nil {
 		return 0, err
 	}
 	return ({{ .Type }})(p), nil
-}
-
-// ParseHex parses a string as base 16 {{ .Type }}.
-func ParseHex(v string) ({{ .Type }}, error) {
-	p, err := strconv.Parse{{ if .IsSigned }}Int{{ else }}Uint{{ end }}(v, 16, BitSize)
-	if err != nil {
-		return 0, err
-	}
-	return ({{ .Type }})(p), nil
-}
-
-// StrDec interprets the value as base 10 and converts it to string.
-func StrDec(v {{ .Type }}) string {
-	return fmt.Sprintf("%d", v)
-}
-
-// StrHex interprets the value as base 16 and converts it to string.
-func StrHex(v {{ .Type }}) string {
-	return fmt.Sprintf("%x", v)
 }
 `))
 
 var testTpl = template.Must(template.New("").Parse(`package {{ .Pkg }}_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/ibrt/golang-lib/types/numbers/{{ .Pkg }}"
 	"github.com/stretchr/testify/require"
 )
-
-const Max = {{ .Max }}
 
 func TestPtr(t *testing.T) {
 	p := {{ .Pkg }}.Ptr(0)
@@ -135,72 +112,52 @@ func TestValDef(t *testing.T) {
 	require.Equal(t, {{ .Type }}(1), {{ .Pkg }}.ValDef({{ .Pkg }}.Ptr(1), 1))
 }
 
-func TestParseDec(t *testing.T) {
-	v, err := {{ .Pkg }}.ParseDec("10")
+func TestParse(t *testing.T) {
+	v, err := {{ .Pkg }}.Parse("10")
 	require.NoError(t, err)
 	require.Equal(t, {{ .Type }}(10), v)
-	v, err = {{ .Pkg }}.ParseDec(fmt.Sprintf("%d", Max))
-	require.NoError(t, err)
-	require.Equal(t, {{ .Type }}(Max), v)
-	_, err = {{ .Pkg }}.ParseDec("")
+	_, err = {{ .Pkg }}.Parse("")
 	require.Error(t, err)
-	_, err = {{ .Pkg }}.ParseDec("A")
+	_, err = {{ .Pkg }}.Parse("A")
 	require.Error(t, err)
-}
-
-func TestParseHex(t *testing.T) {
-	v, err := {{ .Pkg }}.ParseHex("20")
-	require.NoError(t, err)
-	require.Equal(t, {{ .Type }}(0x20), v)
-	v, err = {{ .Pkg }}.ParseHex(fmt.Sprintf("%x", Max))
-	require.NoError(t, err)
-	require.Equal(t, {{ .Type }}(Max), v)
-	v, err = {{ .Pkg }}.ParseHex(fmt.Sprintf("%X", Max))
-	require.NoError(t, err)
-	require.Equal(t, {{ .Type }}(Max), v)
-	_, err = {{ .Pkg }}.ParseHex("")
-	require.Error(t, err)
-}
-
-func TestStrDec(t *testing.T) {
-	require.Equal(t, "10", {{ .Pkg }}.StrDec(10))
-}
-
-func TestStrHex(t *testing.T) {
-	require.Equal(t, "10", {{ .Pkg }}.StrHex(0x10))
-	require.Equal(t, "a", {{ .Pkg }}.StrHex(0xA))
-	require.Equal(t, "11", {{ .Pkg }}.StrHex(0x11))
 }
 `))
 
 type params struct {
-	Type     string
-	IsSigned bool
-	Size     int
+	Type string
+	Size int
 }
 
 func (p *params) Pkg() string {
 	return p.Type + "s"
 }
 
-func (p *params) Max() string {
-	if p.IsSigned {
-		return fmt.Sprintf("1<<(%v.BitSize-1) - 1", p.Pkg())
+func (p *params) ParseCall() string {
+	switch p.Type[0] {
+	case 'i':
+		return "strconv.ParseInt(v, 10, BitSize)"
+	case 'u':
+		return "strconv.ParseUint(v, 10, BitSize)"
+	case 'f':
+		return "strconv.ParseFloat(v, BitSize)"
+	default:
+		panic("unknown type")
 	}
-	return fmt.Sprintf("1<<%v.BitSize - 1", p.Pkg())
 }
 
 var genParams = []*params{
-	{"int8", true, 8},
-	{"int16", true, 16},
-	{"int32", true, 32},
-	{"int64", true, 64},
-	{"int", true, -1},
-	{"uint8", true, 8},
-	{"uint16", true, 16},
-	{"uint32", true, 32},
-	{"uint64", true, 64},
-	{"uint", true, -1},
+	{"int8", 8},
+	{"int16", 16},
+	{"int32", 32},
+	{"int64", 64},
+	{"int", -1},
+	{"uint8", 8},
+	{"uint16", 16},
+	{"uint32", 32},
+	{"uint64", 64},
+	{"uint", -1},
+	{"float32", 32},
+	{"float64", 64},
 }
 
 func main() {

@@ -1,14 +1,11 @@
 package uint8s_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/ibrt/golang-lib/types/numbers/uint8s"
 	"github.com/stretchr/testify/require"
 )
-
-const Max = 1<<(uint8s.BitSize-1) - 1
 
 func TestPtr(t *testing.T) {
 	p := uint8s.Ptr(0)
@@ -44,39 +41,12 @@ func TestValDef(t *testing.T) {
 	require.Equal(t, uint8(1), uint8s.ValDef(uint8s.Ptr(1), 1))
 }
 
-func TestParseDec(t *testing.T) {
-	v, err := uint8s.ParseDec("10")
+func TestParse(t *testing.T) {
+	v, err := uint8s.Parse("10")
 	require.NoError(t, err)
 	require.Equal(t, uint8(10), v)
-	v, err = uint8s.ParseDec(fmt.Sprintf("%d", Max))
-	require.NoError(t, err)
-	require.Equal(t, uint8(Max), v)
-	_, err = uint8s.ParseDec("")
+	_, err = uint8s.Parse("")
 	require.Error(t, err)
-	_, err = uint8s.ParseDec("A")
+	_, err = uint8s.Parse("A")
 	require.Error(t, err)
-}
-
-func TestParseHex(t *testing.T) {
-	v, err := uint8s.ParseHex("20")
-	require.NoError(t, err)
-	require.Equal(t, uint8(0x20), v)
-	v, err = uint8s.ParseHex(fmt.Sprintf("%x", Max))
-	require.NoError(t, err)
-	require.Equal(t, uint8(Max), v)
-	v, err = uint8s.ParseHex(fmt.Sprintf("%X", Max))
-	require.NoError(t, err)
-	require.Equal(t, uint8(Max), v)
-	_, err = uint8s.ParseHex("")
-	require.Error(t, err)
-}
-
-func TestStrDec(t *testing.T) {
-	require.Equal(t, "10", uint8s.StrDec(10))
-}
-
-func TestStrHex(t *testing.T) {
-	require.Equal(t, "10", uint8s.StrHex(0x10))
-	require.Equal(t, "a", uint8s.StrHex(0xA))
-	require.Equal(t, "11", uint8s.StrHex(0x11))
 }

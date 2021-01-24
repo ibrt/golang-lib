@@ -1,4 +1,4 @@
-package uint64s
+package float64s
 
 import (
 	"strconv"
@@ -10,12 +10,12 @@ const (
 )
 
 // Ptr returns a pointer to the value.
-func Ptr(v uint64) *uint64 {
+func Ptr(v float64) *float64 {
 	return &v
 }
 
 // PtrZeroToNil returns a pointer to the value, or nil if 0.
-func PtrZeroToNil(v uint64) *uint64 {
+func PtrZeroToNil(v float64) *float64 {
 	if v == 0 {
 		return nil
 	}
@@ -23,7 +23,7 @@ func PtrZeroToNil(v uint64) *uint64 {
 }
 
 // PtrDefToNil returns a pointer to the value, or nil if "def".
-func PtrDefToNil(v uint64, def uint64) *uint64 {
+func PtrDefToNil(v float64, def float64) *float64 {
 	if v == def {
 		return nil
 	}
@@ -31,7 +31,7 @@ func PtrDefToNil(v uint64, def uint64) *uint64 {
 }
 
 // Val returns the pointer value, defaulting to zero if nil.
-func Val(v *uint64) uint64 {
+func Val(v *float64) float64 {
 	if v == nil {
 		return 0
 	}
@@ -39,18 +39,18 @@ func Val(v *uint64) uint64 {
 }
 
 // ValDef returns the pointer value, defaulting to "def" if nil.
-func ValDef(v *uint64, def uint64) uint64 {
+func ValDef(v *float64, def float64) float64 {
 	if v == nil {
 		return def
 	}
 	return *v
 }
 
-// ParseDec parses a string as base 10 uint64.
-func Parse(v string) (uint64, error) {
-	p, err := strconv.ParseUint(v, 10, BitSize)
+// ParseDec parses a string as base 10 float64.
+func Parse(v string) (float64, error) {
+	p, err := strconv.ParseFloat(v, BitSize)
 	if err != nil {
 		return 0, err
 	}
-	return (uint64)(p), nil
+	return (float64)(p), nil
 }
