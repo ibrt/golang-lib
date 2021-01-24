@@ -83,3 +83,21 @@ func (s Slice) Sort() {
 func (s Slice) IsSorted() bool {
 	return sort.IsSorted(s)
 }
+
+// SliceToMap converts a slice to map.
+func SliceToMap(s []float32) map[float32]struct{} {
+	m := make(map[float32]struct{}, len(s))
+	for _, v := range s {
+		m[v] = struct{}{}
+	}
+	return m
+}
+
+// MapToSlice converts a map to slice.
+func MapToSlice(m map[float32]struct{}) []float32 {
+	s := make([]float32, 0, len(m))
+	for v := range m {
+		s = append(s, v)
+	}
+	return s
+}

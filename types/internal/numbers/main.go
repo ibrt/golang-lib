@@ -96,6 +96,24 @@ func (s Slice) Sort() {
 func (s Slice) IsSorted() bool {
 	return sort.IsSorted(s)
 }
+
+// SliceToMap converts a slice to map.
+func SliceToMap(s []{{ .Type }}) map[{{ .Type }}]struct{} {
+	m := make(map[{{ .Type }}]struct{}, len(s))
+	for _, v := range s {
+		m[v] = struct{}{}
+	}
+	return m
+}
+
+// MapToSlice converts a map to slice.
+func MapToSlice(m map[{{ .Type }}]struct{}) []{{ .Type }} {
+	s := make([]{{ .Type }}, 0, len(m))
+	for v := range m {
+		s = append(s, v)
+	}
+	return s
+}
 `))
 
 var testTpl = template.Must(template.New("").Parse(`package {{ .Pkg }}_test
@@ -157,6 +175,21 @@ func TestSlice(t *testing.T) {
 	{{ .Pkg }}.Slice(s).Sort()
 	require.Equal(t, []{{ .Type }}{0, 1, 2, 3, 4}, s)
 	require.True(t, {{ .Pkg }}.Slice(s).IsSorted())
+}
+
+func TestSliceToMap(t *testing.T) {
+	require.Equal(t, map[{{ .Type }}]struct{}{}, {{ .Pkg }}.SliceToMap(nil))
+	require.Equal(t, map[{{ .Type }}]struct{}{}, {{ .Pkg }}.SliceToMap([]{{ .Type }}{}))
+	require.Equal(t, map[{{ .Type }}]struct{}{1: {}}, {{ .Pkg }}.SliceToMap([]{{ .Type }}{1}))
+	require.Equal(t, map[{{ .Type }}]struct{}{1: {}, 2: {}}, {{ .Pkg }}.SliceToMap([]{{ .Type }}{1, 2}))
+	require.Equal(t, map[{{ .Type }}]struct{}{1: {}, 2: {}}, {{ .Pkg }}.SliceToMap([]{{ .Type }}{1, 1, 2, 2}))
+}
+
+func TestMapToSlice(t *testing.T) {
+	require.Equal(t, []{{ .Type }}{}, {{ .Pkg }}.MapToSlice(nil))
+	require.Equal(t, []{{ .Type }}{}, {{ .Pkg }}.MapToSlice(map[{{ .Type }}]struct{}{}))
+	require.Equal(t, []{{ .Type }}{1}, {{ .Pkg }}.MapToSlice(map[{{ .Type }}]struct{}{1: {}}))
+	require.Equal(t, map[{{ .Type }}]struct{}{1: {}, 2: {}}, {{ .Pkg }}.SliceToMap({{ .Pkg }}.MapToSlice(map[{{ .Type }}]struct{}{1: {}, 2: {}})))
 }
 `))
 

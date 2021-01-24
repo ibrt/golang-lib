@@ -58,3 +58,18 @@ func TestSlice(t *testing.T) {
 	require.Equal(t, []uint32{0, 1, 2, 3, 4}, s)
 	require.True(t, uint32s.Slice(s).IsSorted())
 }
+
+func TestSliceToMap(t *testing.T) {
+	require.Equal(t, map[uint32]struct{}{}, uint32s.SliceToMap(nil))
+	require.Equal(t, map[uint32]struct{}{}, uint32s.SliceToMap([]uint32{}))
+	require.Equal(t, map[uint32]struct{}{1: {}}, uint32s.SliceToMap([]uint32{1}))
+	require.Equal(t, map[uint32]struct{}{1: {}, 2: {}}, uint32s.SliceToMap([]uint32{1, 2}))
+	require.Equal(t, map[uint32]struct{}{1: {}, 2: {}}, uint32s.SliceToMap([]uint32{1, 1, 2, 2}))
+}
+
+func TestMapToSlice(t *testing.T) {
+	require.Equal(t, []uint32{}, uint32s.MapToSlice(nil))
+	require.Equal(t, []uint32{}, uint32s.MapToSlice(map[uint32]struct{}{}))
+	require.Equal(t, []uint32{1}, uint32s.MapToSlice(map[uint32]struct{}{1: {}}))
+	require.Equal(t, map[uint32]struct{}{1: {}, 2: {}}, uint32s.SliceToMap(uint32s.MapToSlice(map[uint32]struct{}{1: {}, 2: {}})))
+}
