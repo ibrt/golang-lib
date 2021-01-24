@@ -136,6 +136,28 @@ func TestID(t *testing.T) {
 	require.False(t, id.In(fmt.Errorf("test error")))
 }
 
+func TestStatusCode(t *testing.T) {
+	require.Equal(t, errors.StatusCode(0), errors.GetStatusCode(errors.Errorf("test error")))
+	require.Equal(t, errors.StatusInternalServerError, errors.GetStatusCodeOr500(errors.Errorf("test error")))
+	require.Equal(t, errors.StatusCode(0), errors.GetStatusCode(fmt.Errorf("test error")))
+	require.Equal(t, errors.StatusInternalServerError, errors.GetStatusCodeOr500(fmt.Errorf("test error")))
+	err := errors.Errorf("test error", errors.StatusCode(50))
+	require.NotNil(t, err)
+	require.Equal(t, errors.StatusCode(50), errors.GetStatusCode(err))
+	err = errors.Errorf("test error", errors.StatusNotFound)
+	require.NotNil(t, err)
+	require.Equal(t, errors.StatusNotFound, errors.GetStatusCode(err))
+	statusCode := errors.StatusNotFound
+	require.Equal(t, 500, statusCode.Int())
+	require.Equal(t, "Not Found", statusCode.String())
+	err = errors.Errorf("test error", statusCode)
+	require.NotNil(t, err)
+	require.Equal(t, statusCode, errors.GetStatusCode(err))
+	require.True(t, statusCode.In(err))
+	require.False(t, statusCode.In(errors.Errorf("test error")))
+	require.False(t, statusCode.In(fmt.Errorf("test error")))
+}
+
 func TestMetadata(t *testing.T) {
 	require.Equal(t, errors.Metadata{}, errors.GetMetadata(errors.Errorf("test error")))
 	require.Equal(t, errors.Metadata{}, errors.GetMetadata(fmt.Errorf("test error")))

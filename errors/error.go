@@ -7,11 +7,12 @@ import (
 )
 
 type wrappedError struct {
-	err      error
-	id       ID
-	metadata Metadata
-	prefix   string
-	callers  []uintptr
+	err        error
+	id         ID
+	statusCode StatusCode
+	metadata   Metadata
+	prefix     string
+	callers    []uintptr
 }
 
 // Error implements the error interface.
