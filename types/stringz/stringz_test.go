@@ -61,3 +61,27 @@ func TestMapToSlice(t *testing.T) {
 	require.Equal(t, []string{"1"}, stringz.MapToSlice(map[string]struct{}{"1": {}}))
 	require.Equal(t, map[string]struct{}{"1": {}, "2": {}}, stringz.SliceToMap(stringz.MapToSlice(map[string]struct{}{"1": {}, "2": {}})))
 }
+
+func TestSafeIndex(t *testing.T) {
+	require.Equal(t, "", stringz.SafeIndex(nil, 0))
+	require.Equal(t, "", stringz.SafeIndex(nil, 1))
+	require.Equal(t, "", stringz.SafeIndex(nil, -1))
+	require.Equal(t, "", stringz.SafeIndex([]string{}, 0))
+	require.Equal(t, "", stringz.SafeIndex([]string{}, 1))
+	require.Equal(t, "", stringz.SafeIndex([]string{}, -1))
+	require.Equal(t, "a", stringz.SafeIndex([]string{"a"}, 0))
+	require.Equal(t, "", stringz.SafeIndex([]string{"a"}, 1))
+	require.Equal(t, "", stringz.SafeIndex([]string{"a"}, -1))
+}
+
+func TestSafeIndexPtr(t *testing.T) {
+	require.Nil(t, stringz.SafeIndexPtr(nil, 0))
+	require.Nil(t, stringz.SafeIndexPtr(nil, 1))
+	require.Nil(t, stringz.SafeIndexPtr(nil, -1))
+	require.Nil(t, stringz.SafeIndexPtr([]string{}, 0))
+	require.Nil(t, stringz.SafeIndexPtr([]string{}, 1))
+	require.Nil(t, stringz.SafeIndexPtr([]string{}, -1))
+	require.Equal(t, stringz.Ptr("a"), stringz.SafeIndexPtr([]string{"a"}, 0))
+	require.Nil(t, stringz.SafeIndexPtr([]string{"a"}, 1))
+	require.Nil(t, stringz.SafeIndexPtr([]string{"a"}, -1))
+}
