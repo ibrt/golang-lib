@@ -11,3 +11,13 @@ func UnixMilli(t time.Time) int64 {
 func FromUnixMilli(sec, msec int64) time.Time {
 	return time.Unix(sec, msec*int64(time.Millisecond))
 }
+
+// UnixMicro converts the time to a Unix timestamp in microseconds.
+func UnixMicro(t time.Time) int64 {
+	return t.UnixNano() / int64(time.Microsecond)
+}
+
+// FromUnixMicro converts a Unix timestamp in microseconds to Time.
+func FromUnixMicro(sec, msec int64) time.Time {
+	return time.Unix(sec, msec*int64(time.Microsecond))
+}
