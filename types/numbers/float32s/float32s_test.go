@@ -50,3 +50,11 @@ func TestParse(t *testing.T) {
 	_, err = float32s.Parse("A")
 	require.Error(t, err)
 }
+
+func TestSlice(t *testing.T) {
+	s := []float32{2, 0, 3, 1, 4}
+	require.False(t, float32s.Slice(s).IsSorted())
+	float32s.Slice(s).Sort()
+	require.Equal(t, []float32{0, 1, 2, 3, 4}, s)
+	require.True(t, float32s.Slice(s).IsSorted())
+}

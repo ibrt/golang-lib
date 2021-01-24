@@ -14,6 +14,7 @@ import (
 var tpl = template.Must(template.New("").Parse(`package {{ .Pkg }}
 
 import (
+	"sort"
 	"strconv"
 )
 
@@ -66,6 +67,34 @@ func Parse(v string) ({{ .Type }}, error) {
 		return 0, err
 	}
 	return ({{ .Type }})(p), nil
+}
+
+// Slice is a slice of values.
+type Slice []{{ .Type }}
+
+// Len implements the sort.Interface interface.
+func (s Slice) Len() int {
+	return len(s)
+}
+
+// Less implements the sort.Interface interface.
+func (s Slice) Less(i, j int) bool {
+	return s[i] < s[j]
+}
+
+// Swap implements the sort.Interface interface.
+func (s Slice) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+// Sort the slice.
+func (s Slice) Sort() {
+	sort.Sort(s)
+}
+
+// IsSorted returns true if the slice is sorted.
+func (s Slice) IsSorted() bool {
+	return sort.IsSorted(s)
 }
 `))
 
@@ -120,6 +149,14 @@ func TestParse(t *testing.T) {
 	require.Error(t, err)
 	_, err = {{ .Pkg }}.Parse("A")
 	require.Error(t, err)
+}
+
+func TestSlice(t *testing.T) {
+	s := []{{ .Type }}{2, 0, 3, 1, 4}
+	require.False(t, {{ .Pkg }}.Slice(s).IsSorted())
+	{{ .Pkg }}.Slice(s).Sort()
+	require.Equal(t, []{{ .Type }}{0, 1, 2, 3, 4}, s)
+	require.True(t, {{ .Pkg }}.Slice(s).IsSorted())
 }
 `))
 

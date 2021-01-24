@@ -50,3 +50,11 @@ func TestParse(t *testing.T) {
 	_, err = uints.Parse("A")
 	require.Error(t, err)
 }
+
+func TestSlice(t *testing.T) {
+	s := []uint{2, 0, 3, 1, 4}
+	require.False(t, uints.Slice(s).IsSorted())
+	uints.Slice(s).Sort()
+	require.Equal(t, []uint{0, 1, 2, 3, 4}, s)
+	require.True(t, uints.Slice(s).IsSorted())
+}

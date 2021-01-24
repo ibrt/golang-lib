@@ -1,6 +1,7 @@
 package uint64s
 
 import (
+	"sort"
 	"strconv"
 )
 
@@ -53,4 +54,32 @@ func Parse(v string) (uint64, error) {
 		return 0, err
 	}
 	return (uint64)(p), nil
+}
+
+// Slice is a slice of values.
+type Slice []uint64
+
+// Len implements the sort.Interface interface.
+func (s Slice) Len() int {
+	return len(s)
+}
+
+// Less implements the sort.Interface interface.
+func (s Slice) Less(i, j int) bool {
+	return s[i] < s[j]
+}
+
+// Swap implements the sort.Interface interface.
+func (s Slice) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+// Sort the slice.
+func (s Slice) Sort() {
+	sort.Sort(s)
+}
+
+// IsSorted returns true if the slice is sorted.
+func (s Slice) IsSorted() bool {
+	return sort.IsSorted(s)
 }
