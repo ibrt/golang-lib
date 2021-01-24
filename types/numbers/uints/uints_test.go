@@ -74,6 +74,33 @@ func TestMapToSlice(t *testing.T) {
 	require.Equal(t, map[uint]struct{}{1: {}, 2: {}}, uints.SliceToMap(uints.MapToSlice(map[uint]struct{}{1: {}, 2: {}})))
 }
 
+func TestSwapMap(t *testing.T) {
+	swap, err := uints.SwapMap(map[uint]uint{
+		1: 2,
+		3: 4,
+	})
+	require.NoError(t, err)
+	require.Equal(t,
+		map[uint]uint{
+			2: 1,
+			4: 3,
+		}, swap)
+
+	swap, err = uints.SwapMap(map[uint]uint{})
+	require.NoError(t, err)
+	require.Equal(t, map[uint]uint{}, swap)
+
+	swap, err = uints.SwapMap(nil)
+	require.NoError(t, err)
+	require.Equal(t, map[uint]uint{}, swap)
+
+	_, err = uints.SwapMap(map[uint]uint{
+		1: 3,
+		2: 3,
+	})
+	require.EqualError(t, err, "duplicate value: 3")
+}
+
 func TestSafeIndex(t *testing.T) {
 	require.Equal(t, uint(0), uints.SafeIndex(nil, 0))
 	require.Equal(t, uint(0), uints.SafeIndex(nil, 1))

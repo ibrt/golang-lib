@@ -14,6 +14,7 @@ import (
 var tpl = template.Must(template.New("").Parse(`package {{ .Pkg }}
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 )
@@ -115,6 +116,21 @@ func MapToSlice(m map[{{ .Type }}]struct{}) []{{ .Type }} {
 	return s
 }
 
+// SwapMap returns a copy of the map with keys and values swapped.
+// Fails in case of duplicate values.
+func SwapMap(m map[{{ .Type }}]{{ .Type }}) (map[{{ .Type }}]{{ .Type }}, error) {
+	i := make(map[{{ .Type }}]{{ .Type }}, len(m))
+
+	for k, v := range m {
+		if _, ok := i[v]; ok {
+			return nil, fmt.Errorf("duplicate value: %v", v)
+		}
+		i[v] = k
+	}
+
+	return i, nil
+}
+
 // SafeIndex returns "s[i]" if possible, an 0 otherwise.
 func SafeIndex(s []{{ .Type }}, i int) {{ .Type }} {
 	if s == nil || i < 0 || i >= len(s) {
@@ -206,6 +222,33 @@ func TestMapToSlice(t *testing.T) {
 	require.Equal(t, []{{ .Type }}{}, {{ .Pkg }}.MapToSlice(map[{{ .Type }}]struct{}{}))
 	require.Equal(t, []{{ .Type }}{1}, {{ .Pkg }}.MapToSlice(map[{{ .Type }}]struct{}{1: {}}))
 	require.Equal(t, map[{{ .Type }}]struct{}{1: {}, 2: {}}, {{ .Pkg }}.SliceToMap({{ .Pkg }}.MapToSlice(map[{{ .Type }}]struct{}{1: {}, 2: {}})))
+}
+
+func TestSwapMap(t *testing.T) {
+	swap, err := {{ .Pkg }}.SwapMap(map[{{ .Type }}]{{ .Type }}{
+		1: 2,
+		3: 4,
+	})
+	require.NoError(t, err)
+	require.Equal(t,
+		map[{{ .Type }}]{{ .Type }}{
+			2: 1,
+			4: 3,
+		}, swap)
+
+	swap, err = {{ .Pkg }}.SwapMap(map[{{ .Type }}]{{ .Type }}{})
+	require.NoError(t, err)
+	require.Equal(t, map[{{ .Type }}]{{ .Type }}{}, swap)
+
+	swap, err = {{ .Pkg }}.SwapMap(nil)
+	require.NoError(t, err)
+	require.Equal(t, map[{{ .Type }}]{{ .Type }}{}, swap)
+
+	_, err = {{ .Pkg }}.SwapMap(map[{{ .Type }}]{{ .Type }}{
+		1: 3,
+		2: 3,
+	})
+	require.EqualError(t, err, "duplicate value: 3")
 }
 
 func TestSafeIndex(t *testing.T) {

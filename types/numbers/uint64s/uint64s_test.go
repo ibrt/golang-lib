@@ -74,6 +74,33 @@ func TestMapToSlice(t *testing.T) {
 	require.Equal(t, map[uint64]struct{}{1: {}, 2: {}}, uint64s.SliceToMap(uint64s.MapToSlice(map[uint64]struct{}{1: {}, 2: {}})))
 }
 
+func TestSwapMap(t *testing.T) {
+	swap, err := uint64s.SwapMap(map[uint64]uint64{
+		1: 2,
+		3: 4,
+	})
+	require.NoError(t, err)
+	require.Equal(t,
+		map[uint64]uint64{
+			2: 1,
+			4: 3,
+		}, swap)
+
+	swap, err = uint64s.SwapMap(map[uint64]uint64{})
+	require.NoError(t, err)
+	require.Equal(t, map[uint64]uint64{}, swap)
+
+	swap, err = uint64s.SwapMap(nil)
+	require.NoError(t, err)
+	require.Equal(t, map[uint64]uint64{}, swap)
+
+	_, err = uint64s.SwapMap(map[uint64]uint64{
+		1: 3,
+		2: 3,
+	})
+	require.EqualError(t, err, "duplicate value: 3")
+}
+
 func TestSafeIndex(t *testing.T) {
 	require.Equal(t, uint64(0), uint64s.SafeIndex(nil, 0))
 	require.Equal(t, uint64(0), uint64s.SafeIndex(nil, 1))

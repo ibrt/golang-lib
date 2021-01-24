@@ -1,6 +1,7 @@
 package uint32s
 
 import (
+	"fmt"
 	"sort"
 	"strconv"
 )
@@ -100,6 +101,21 @@ func MapToSlice(m map[uint32]struct{}) []uint32 {
 		s = append(s, v)
 	}
 	return s
+}
+
+// SwapMap returns a copy of the map with keys and values swapped.
+// Fails in case of duplicate values.
+func SwapMap(m map[uint32]uint32) (map[uint32]uint32, error) {
+	i := make(map[uint32]uint32, len(m))
+
+	for k, v := range m {
+		if _, ok := i[v]; ok {
+			return nil, fmt.Errorf("duplicate value: %v", v)
+		}
+		i[v] = k
+	}
+
+	return i, nil
 }
 
 // SafeIndex returns "s[i]" if possible, an 0 otherwise.
