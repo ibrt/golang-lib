@@ -1,4 +1,4 @@
-package strings
+package stringz
 
 import (
 	"sort"
@@ -67,4 +67,22 @@ func (s Slice) Sort() {
 // IsSorted returns true if the slice is sorted.
 func (s Slice) IsSorted() bool {
 	return sort.IsSorted(s)
+}
+
+// SliceToMap converts a slice to map.
+func SliceToMap(s []string) map[string]struct{} {
+	m := make(map[string]struct{}, len(s))
+	for _, v := range s {
+		m[v] = struct{}{}
+	}
+	return m
+}
+
+// MapToSlice converts a map to slice.
+func MapToSlice(m map[string]struct{}) []string {
+	s := make([]string, 0, len(m))
+	for v := range m {
+		s = append(s, v)
+	}
+	return s
 }
