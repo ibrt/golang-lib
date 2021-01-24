@@ -60,7 +60,7 @@ func ValDef(v *{{ .Type }}, def {{ .Type }}) {{ .Type }} {
 	return *v
 }
 
-// ParseDec parses a string as base 10 {{ .Type }}.
+// Parse parses a string as base 10 {{ .Type }}.
 func Parse(v string) ({{ .Type }}, error) {
 	p, err := {{ .ParseCall }}
 	if err != nil {

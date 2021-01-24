@@ -9,7 +9,7 @@ func Ptr(v string) *string {
 	return &v
 }
 
-// PtrZeroToNil returns a pointer to the value, or nil if "".
+// PtrEmptyToNil returns a pointer to the value, or nil if "".
 func PtrEmptyToNil(v string) *string {
 	if v == "" {
 		return nil

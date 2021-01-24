@@ -47,7 +47,7 @@ func ValDef(v *float32, def float32) float32 {
 	return *v
 }
 
-// ParseDec parses a string as base 10 float32.
+// Parse parses a string as base 10 float32.
 func Parse(v string) (float32, error) {
 	p, err := strconv.ParseFloat(v, BitSize)
 	if err != nil {

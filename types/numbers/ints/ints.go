@@ -47,7 +47,7 @@ func ValDef(v *int, def int) int {
 	return *v
 }
 
-// ParseDec parses a string as base 10 int.
+// Parse parses a string as base 10 int.
 func Parse(v string) (int, error) {
 	p, err := strconv.ParseInt(v, 10, BitSize)
 	if err != nil {

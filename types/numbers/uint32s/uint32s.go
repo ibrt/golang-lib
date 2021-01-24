@@ -47,7 +47,7 @@ func ValDef(v *uint32, def uint32) uint32 {
 	return *v
 }
 
-// ParseDec parses a string as base 10 uint32.
+// Parse parses a string as base 10 uint32.
 func Parse(v string) (uint32, error) {
 	p, err := strconv.ParseUint(v, 10, BitSize)
 	if err != nil {
