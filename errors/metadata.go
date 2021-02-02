@@ -6,7 +6,7 @@ var (
 
 // M is a shorthand for providing metadata to errors.
 func M(k string, v interface{}) OptionFunc {
-	return func(_ bool, err error) {
+	return func(err error) {
 		if e, ok := err.(*wrappedError); ok {
 			e.metadata[k] = v
 		}
@@ -17,7 +17,7 @@ func M(k string, v interface{}) OptionFunc {
 type Metadata map[string]interface{}
 
 // Apply implements the Option interface.
-func (m Metadata) Apply(_ bool, err error) {
+func (m Metadata) Apply(err error) {
 	if e, ok := err.(*wrappedError); ok {
 		for k, v := range m {
 			e.metadata[k] = v

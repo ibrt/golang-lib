@@ -37,7 +37,7 @@ func Wrap(err error, options ...Option) error {
 	}
 
 	for _, option := range options {
-		option.Apply(!ok, e)
+		option.Apply(e)
 	}
 
 	return e
@@ -49,7 +49,7 @@ func MaybeWrap(err error, options ...Option) error {
 		return nil
 	}
 
-	options = append(options, Skip(1))
+	options = append(options, Skip())
 	return Wrap(err, options...)
 }
 
@@ -59,7 +59,7 @@ func MustWrap(err error, options ...Option) {
 		panic("nil error")
 	}
 
-	options = append(options, Skip(1))
+	options = append(options, Skip())
 	panic(Wrap(err, options...))
 }
 
@@ -69,7 +69,7 @@ func MaybeMustWrap(err error, options ...Option) {
 		return
 	}
 
-	options = append(options, Skip(1))
+	options = append(options, Skip())
 	MustWrap(err, options...)
 }
 
@@ -79,7 +79,7 @@ func WrapRecover(r interface{}, options ...Option) error {
 		panic("nil recover")
 	}
 
-	options = append(options, Skip(1))
+	options = append(options, Skip())
 
 	switch r := r.(type) {
 	case *wrappedError:
@@ -97,7 +97,7 @@ func MaybeWrapRecover(r interface{}, options ...Option) error {
 		return nil
 	}
 
-	options = append(options, Skip(1))
+	options = append(options, Skip())
 	return WrapRecover(r, options...)
 }
 
@@ -111,13 +111,13 @@ func Errorf(format string, options ...Option) error {
 		}
 	}
 
-	options = append(options, Skip(1))
+	options = append(options, Skip())
 	return Wrap(fmt.Errorf(format, mergedArgs...), options...)
 }
 
 // MustErrorf is like Errorf but panics instead of returning the error.
 func MustErrorf(format string, options ...Option) {
-	options = append(options, Skip(1))
+	options = append(options, Skip())
 	panic(Errorf(format, options...))
 }
 
@@ -127,7 +127,7 @@ func Assertf(cond bool, format string, options ...Option) {
 		return
 	}
 
-	options = append(options, Skip(1))
+	options = append(options, Skip())
 	MustErrorf(format, options...)
 }
 

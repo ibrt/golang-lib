@@ -12,13 +12,8 @@ func CompoundReleaser(releasers ...Releaser) Releaser {
 	}
 }
 
-// NoOpReleaser is a Releaser that does nothing.
-func NoOpReleaser() {
-	// intentionally empty
-}
-
 // SafeRelease calls Release on the Releaser if not nil.
-// Note: this is mainly needed because a Releaser can be returned by Initialize also in case of error.
+// Note: this is mainly needed because a Releaser can be returned by Bootstrap also in case of error.
 func SafeRelease(releaser Releaser) {
 	if releaser != nil {
 		releaser()

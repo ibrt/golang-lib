@@ -189,9 +189,3 @@ func TestPrefix(t *testing.T) {
 			errors.Prefix("p1 %v", 10),
 			errors.Prefix("p2 %v", 20)).Error())
 }
-
-func TestCallers(t *testing.T) {
-	require.True(t, strings.HasPrefix(errors.FormatStackTrace(errors.GetCallers(fmt.Errorf("test error ")))[0],
-		"errors_test.TestCallers"))
-	require.Empty(t, errors.GetCallers(errors.Errorf("test error", errors.Skip(1000))))
-}

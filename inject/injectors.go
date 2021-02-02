@@ -10,6 +10,13 @@ import (
 // Injector injects values into a Context.
 type Injector func(ctx context.Context) (context.Context, error)
 
+// MustInject calls the Injector, panicking on error.
+func MustInject(ctx context.Context, injector Injector) context.Context {
+	ctx, err := injector(ctx)
+	errors.MaybeMustWrap(err)
+	return ctx
+}
+
 // SingletonInjector always injects the given (contextKey, value) pair.
 func SingletonInjector(contextKey, value interface{}) Injector {
 	return func(ctx context.Context) (context.Context, error) {

@@ -18,7 +18,7 @@ func (id ID) In(err error) bool {
 }
 
 // Apply implements the Option interface.
-func (id ID) Apply(_ bool, err error) {
+func (id ID) Apply(err error) {
 	if e, ok := err.(*wrappedError); ok {
 		e.id = id
 	}

@@ -18,14 +18,21 @@ func GetCallers(err error) []uintptr {
 	return callers[:runtime.Callers(2, callers[:])]
 }
 
-// Skip skips the given number of leading frames in the stack trace (only on first wrap).
-func Skip(skip int) OptionFunc {
-	return func(firstWrap bool, err error) {
-		if e, ok := err.(*wrappedError); ok && firstWrap && e.callers != nil {
-			if skip > len(e.callers) {
-				skip = len(e.callers)
+// Skip skips the caller from the stack trace.
+func Skip() OptionFunc {
+	var callerFunc *runtime.Func
+	if caller, _, _, ok := runtime.Caller(1); ok {
+		callerFunc = runtime.FuncForPC(caller)
+	}
+
+	return func(err error) {
+		if e, ok := err.(*wrappedError); callerFunc != nil && ok && e.callers != nil {
+			for i, caller := range e.callers {
+				if runtime.FuncForPC(caller) == runtime.FuncForPC(caller) {
+					e.callers = append(e.callers[:i], e.callers[i+1:]...)
+					return
+				}
 			}
-			e.callers = e.callers[skip:]
 		}
 	}
 }

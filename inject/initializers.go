@@ -9,9 +9,16 @@ import (
 // Initializer initializes a value, returning a corresponding Injector and Releaser.
 type Initializer func(ctx context.Context) (Injector, Releaser, error)
 
-// Initialize calls all initializers and returns a compound Injector and Releaser.
+// MustInitialize calls the Initializer, panicking on error.
+func MustInitialize(ctx context.Context, initializer Initializer) (Injector, Releaser) {
+	injector, releaser, err := initializer(ctx)
+	errors.MaybeMustWrap(err)
+	return injector, releaser
+}
+
+// Bootstrap calls all initializers and returns a compound Injector and Releaser.
 // In case of error, the Releasers obtained until then are returned to allow for a clean exit.
-func Initialize(baseCtx context.Context, initializers ...Initializer) (Injector, Releaser, error) {
+func Bootstrap(baseCtx context.Context, initializers ...Initializer) (Injector, Releaser, error) {
 	injectors := make([]Injector, 0, len(initializers))
 	releasers := make([]Releaser, 0, len(initializers))
 

@@ -93,7 +93,7 @@ func (s StatusCode) In(err error) bool {
 }
 
 // Apply implements the Option interface.
-func (s StatusCode) Apply(_ bool, err error) {
+func (s StatusCode) Apply(err error) {
 	if e, ok := err.(*wrappedError); ok {
 		e.statusCode = s
 	}
@@ -107,7 +107,7 @@ func GetStatusCode(err error) StatusCode {
 	return 0
 }
 
-// GetStatusCode gets the status code from the error, or InternalServerError if not set.
+// GetStatusCodeOr500 gets the status code from the error, or InternalServerError if not set.
 func GetStatusCodeOr500(err error) StatusCode {
 	if e, ok := err.(*wrappedError); ok && e.statusCode != 0 {
 		return e.statusCode

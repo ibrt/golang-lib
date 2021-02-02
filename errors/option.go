@@ -6,13 +6,13 @@ var (
 
 // Option describes an option which can be applied to an error.
 type Option interface {
-	Apply(firstWrap bool, err error)
+	Apply(err error)
 }
 
 // OptionFunc describes an option which can be applied to an error.
-type OptionFunc func(firstWrap bool, err error)
+type OptionFunc func(err error)
 
 // Apply implements the Option interface.
-func (f OptionFunc) Apply(firstWrap bool, err error) {
-	f(firstWrap, err)
+func (f OptionFunc) Apply(err error) {
+	f(err)
 }
