@@ -19,7 +19,7 @@ type Clock clocklib.Clock
 
 // Initializer is a Clock initializer.
 func Initializer(_ context.Context) (inject.Injector, inject.Releaser, error) {
-	return inject.SingletonInjectorFactory(clockContextKey, clocklib.New()), nil, nil
+	return SingletonInjectorFactory(clocklib.New()), nil, nil
 }
 
 // SingletonInjectorFactory always injects the given Clock.

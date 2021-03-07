@@ -6,18 +6,27 @@ import (
 	"time"
 
 	clocklib "github.com/benbjohnson/clock"
+	"github.com/ibrt/golang-lib/errors"
 	"github.com/ibrt/golang-lib/inject"
 	"github.com/ibrt/golang-lib/modules/clock"
 )
 
 // Fixtures provides test fixtures for Clock using a real clock.
 type Fixtures struct {
-	// intentionally empty
+	releaser inject.Releaser
 }
 
 // BeforeSuite implements fixtures.BeforeSuite.
 func (f *Fixtures) BeforeSuite(ctx context.Context) context.Context {
-	return inject.MustInject(ctx, clock.SingletonInjectorFactory(clocklib.New()))
+	injector, releaser, err := clock.Initializer(ctx)
+	errors.MaybeMustWrap(err)
+	f.releaser = releaser
+	return inject.MustInject(ctx, injector)
+}
+
+// AfterSuite implements fixtures.AfterSuite.
+func (f *Fixtures) AfterSuite(ctx context.Context) {
+	inject.SafeRelease(f.releaser)
 }
 
 // MockFixtures provides test fixtures for Clock using a mock.
