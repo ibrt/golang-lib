@@ -13,19 +13,19 @@ type Injector func(ctx context.Context) (context.Context, error)
 // MustInject calls the Injector, panicking on error.
 func MustInject(ctx context.Context, injector Injector) context.Context {
 	ctx, err := injector(ctx)
-	errors.MaybeMustWrap(err)
+	errors.MaybeMustWrap(err, errors.Skip())
 	return ctx
 }
 
-// SingletonInjector always injects the given (contextKey, value) pair.
-func SingletonInjector(contextKey, value interface{}) Injector {
+// SingletonInjectorFactory always injects the given (contextKey, value) pair.
+func SingletonInjectorFactory(contextKey, value interface{}) Injector {
 	return func(ctx context.Context) (context.Context, error) {
 		return context.WithValue(ctx, contextKey, value), nil
 	}
 }
 
-// CompoundInjector combines multiple injectors into one.
-func CompoundInjector(injectors ...Injector) Injector {
+// CompoundInjectorFactory combines multiple injectors into one.
+func CompoundInjectorFactory(injectors ...Injector) Injector {
 	return func(ctx context.Context) (context.Context, error) {
 		for _, injector := range injectors {
 			var err error
@@ -42,9 +42,7 @@ func CompoundInjector(injectors ...Injector) Injector {
 func InjectorMiddlewareFactory(injector Injector) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx, err := injector(r.Context())
-			errors.MaybeMustWrap(err)
-			next.ServeHTTP(w, r.WithContext(ctx))
+			next.ServeHTTP(w, r.WithContext(MustInject(r.Context(), injector)))
 		})
 	}
 }

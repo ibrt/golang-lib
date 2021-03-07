@@ -12,7 +12,7 @@ type Initializer func(ctx context.Context) (Injector, Releaser, error)
 // MustInitialize calls the Initializer, panicking on error.
 func MustInitialize(ctx context.Context, initializer Initializer) (Injector, Releaser) {
 	injector, releaser, err := initializer(ctx)
-	errors.MaybeMustWrap(err)
+	errors.MaybeMustWrap(err, errors.Skip())
 	return injector, releaser
 }
 
@@ -25,16 +25,12 @@ func Bootstrap(baseCtx context.Context, initializers ...Initializer) (Injector, 
 	for _, initializer := range initializers {
 		injector, releaser, err := initializer(baseCtx)
 		if err != nil {
-			return nil, CompoundReleaser(releasers...), errors.Wrap(err)
+			return nil, CompoundReleaserFactory(releasers...), errors.Wrap(err)
 		}
 
 		injectors = append(injectors, injector)
 		releasers = append(releasers, releaser)
-
-		if baseCtx, err = injector(baseCtx); err != nil {
-			return nil, CompoundReleaser(releasers...), errors.Wrap(err)
-		}
 	}
 
-	return CompoundInjector(injectors...), CompoundReleaser(releasers...), nil
+	return CompoundInjectorFactory(injectors...), CompoundReleaserFactory(releasers...), nil
 }

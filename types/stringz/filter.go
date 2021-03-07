@@ -41,7 +41,7 @@ func Equal(eq string) Predicate {
 	}
 }
 
-// Filter returns a shallow of the slice containing only the elements for which the predicate is true.
+// Filter returns a shallow copy of the slice containing only the elements for which the predicate is true.
 func Filter(s []string, p Predicate) []string {
 	c := make([]string, 0, len(s))
 	for _, v := range s {

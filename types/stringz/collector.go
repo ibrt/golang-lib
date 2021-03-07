@@ -10,7 +10,7 @@ func SkipDuplicates(c *Collector) {
 	c.skipDuplicates = true
 }
 
-// SkipEmpties skips adding empy strings.
+// SkipEmpties skips adding empty strings.
 func SkipEmpties(c *Collector) {
 	c.skipEmpties = true
 }

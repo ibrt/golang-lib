@@ -92,5 +92,7 @@ func GetID() (string, error) {
 
 // MustGetID is like GetID but panics on error.
 func MustGetID() string {
-	return MustGetAlphabet(IDLen, LowerAlphaNum)
+	s, err := GetAlphabet(IDLen, LowerAlphaNum)
+	errors.MaybeMustWrap(err, errors.Skip())
+	return s
 }
