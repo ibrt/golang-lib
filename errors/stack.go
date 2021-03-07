@@ -28,7 +28,7 @@ func Skip() OptionFunc {
 	return func(err error) {
 		if e, ok := err.(*wrappedError); callerFunc != nil && ok && e.callers != nil {
 			for i, caller := range e.callers {
-				if runtime.FuncForPC(caller) == runtime.FuncForPC(caller) {
+				if callerFunc == runtime.FuncForPC(caller) {
 					e.callers = append(e.callers[:i], e.callers[i+1:]...)
 					return
 				}
