@@ -3,7 +3,9 @@ package clock
 import (
 	"context"
 
-	"github.com/benbjohnson/clock"
+	clocklib "github.com/benbjohnson/clock"
+	"github.com/ibrt/golang-lib/errors"
+	"github.com/ibrt/golang-lib/inject"
 )
 
 type contextKey int
@@ -13,19 +15,29 @@ const (
 )
 
 // Clock describes a clock.
-type Clock clock.Clock
+type Clock clocklib.Clock
 
-// NewClock initializes a new Clock.
-func NewClock() Clock {
-	return clock.New()
+// Initializer is a Clock initializer.
+func Initializer(_ context.Context) (inject.Injector, inject.Releaser, error) {
+	return inject.SingletonInjectorFactory(clockContextKey, clocklib.New()), nil, nil
 }
 
-// Provide adds to context.
-func Provide(ctx context.Context, clk Clock) context.Context {
-	return context.WithValue(ctx, clockContextKey, clk)
+// SingletonInjectorFactory always injects the given Clock.
+func SingletonInjectorFactory(clk Clock) inject.Injector {
+	return inject.SingletonInjectorFactory(clockContextKey, clk)
 }
 
-// Get gets from context.
+// Get returns the Clock, or nil if not found.
 func Get(ctx context.Context) Clock {
-	return ctx.Value(clockContextKey).(Clock)
+	if clk, ok := ctx.Value(clockContextKey).(Clock); ok {
+		return clk
+	}
+	return nil
+}
+
+// MustGet returns the Clock, panics if not found.
+func MustGet(ctx context.Context) Clock {
+	clk := Get(ctx)
+	errors.Assertf(clk != nil, "clock unexpectedly nil", errors.Skip())
+	return clk
 }

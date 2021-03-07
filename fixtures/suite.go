@@ -10,6 +10,21 @@ import (
 	"github.com/ibrt/golang-lib/errors"
 )
 
+// Suite describes a struct that can be used as test suite.
+type Suite interface {
+	IsSuite()
+}
+
+// Mixin can be embedded to implement the Suite interface.
+type Mixin struct {
+	// intentionally empty
+}
+
+// IsSuite implements the Suite interface.
+func (Mixin) IsSuite() {
+	// intentionally empty
+}
+
 // BeforeSuite describes a method invoked before starting a test suite.
 type BeforeSuite interface {
 	BeforeSuite(context.Context) context.Context
