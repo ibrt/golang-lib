@@ -71,7 +71,7 @@ var (
 type wrappedError struct {
 	m      *sync.Mutex
 	errs   []error
-	frames []*Frame
+	frames Frames
 }
 
 // Error implements the error interface.

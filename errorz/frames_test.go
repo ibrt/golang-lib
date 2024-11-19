@@ -141,26 +141,26 @@ func TestNewFrame(t *testing.T) {
 	}
 }
 
+func TestFrames(t *testing.T) {
+	g := NewWithT(t)
+
+	g.Expect((errorz.Frames)(nil).ToSummaries()).To(BeEmpty())
+	g.Expect(errorz.Frames{}.ToSummaries()).To(BeEmpty())
+	g.Expect(errorz.Frames{{Summary: "f1"}, {Summary: "f2"}}.ToSummaries()).To(HaveExactElements("f1", "f2"))
+}
+
 func TestGetFrames(t *testing.T) {
 	g := NewWithT(t)
 
-	frames := errorz.GetFrames(fmt.Errorf("err"))
+	frames := errorz.GetFrames(nil)
+	g.Expect(len(frames)).To(BeNumerically(">", 0))
+	g.Expect(frames[0].ShortLocation).To(Equal("errorz_test.TestGetFrames"))
+
+	frames = errorz.GetFrames(fmt.Errorf("err"))
 	g.Expect(len(frames)).To(BeNumerically(">", 0))
 	g.Expect(frames[0].ShortLocation).To(Equal("errorz_test.TestGetFrames"))
 
 	frames = errorz.GetFrames(errorz.Errorf("err"))
 	g.Expect(len(frames)).To(BeNumerically(">", 0))
 	g.Expect(frames[0].ShortLocation).To(Equal("errorz_test.TestGetFrames"))
-}
-
-func TestGetFramesString(t *testing.T) {
-	g := NewWithT(t)
-
-	frames := errorz.GetFramesString(fmt.Errorf("err"))
-	g.Expect(len(frames)).To(BeNumerically(">", 0))
-	g.Expect(frames[0]).To(HavePrefix("errorz_test.TestGetFramesString"))
-
-	frames = errorz.GetFramesString(errorz.Errorf("err"))
-	g.Expect(len(frames)).To(BeNumerically(">", 0))
-	g.Expect(frames[0]).To(HavePrefix("errorz_test.TestGetFramesString"))
 }

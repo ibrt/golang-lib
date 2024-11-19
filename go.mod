@@ -2,7 +2,10 @@ module github.com/ibrt/golang-lib
 
 go 1.23
 
-require github.com/onsi/gomega v1.35.1
+require (
+	github.com/davecgh/go-spew v1.1.1
+	github.com/onsi/gomega v1.35.1
+)
 
 require (
 	github.com/google/go-cmp v0.6.0 // indirect

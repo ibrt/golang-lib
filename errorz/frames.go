@@ -76,12 +76,24 @@ func NewFrame(frameFunction string, file string, line int) *Frame {
 	return f
 }
 
-// GetFrames returns the frames from the error, or the current frames if not found.
-func GetFrames(err error) []*Frame {
-	if e, ok := As[*wrappedError](err); ok {
-		if e.frames != nil {
-			return e.frames
-		}
+// Frames describes a stack of frames.
+type Frames []*Frame
+
+// ToSummaries converts the frames to a slice of frame summaries.
+func (f Frames) ToSummaries() []string {
+	summaries := make([]string, 0, len(f))
+
+	for _, frame := range f {
+		summaries = append(summaries, frame.Summary)
+	}
+
+	return summaries
+}
+
+// GetFrames returns the frames from the error, or the current frames the error is not wrapped or is nil.
+func GetFrames(err error) Frames {
+	if e, ok := err.(*wrappedError); ok {
+		return e.frames
 	}
 
 	callers := make([]uintptr, 1024)
@@ -106,16 +118,4 @@ func GetFrames(err error) []*Frame {
 	}
 
 	return frames
-}
-
-// GetFramesString returns the frames from the error, or the current frames if not found, represented a string slice.
-func GetFramesString(err error) []string {
-	frames := GetFrames(err)
-	strFrames := make([]string, 0, len(frames))
-
-	for _, frame := range frames {
-		strFrames = append(strFrames, frame.Summary)
-	}
-
-	return strFrames
 }
