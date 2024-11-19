@@ -5,6 +5,7 @@ go 1.23
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/onsi/gomega v1.35.1
+	go.uber.org/mock v0.5.0
 )
 
 require (
