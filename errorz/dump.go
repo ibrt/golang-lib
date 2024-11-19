@@ -1,12 +1,14 @@
 package errorz
 
 import (
+	"strings"
+
 	"github.com/davecgh/go-spew/spew"
 )
 
 var (
 	spewConfig = &spew.ConfigState{
-		Indent:                  "  ",
+		Indent:                  "    ",
 		DisableMethods:          true,
 		DisablePointerMethods:   true,
 		DisablePointerAddresses: true,
@@ -29,11 +31,13 @@ func SDump(err error) string {
 			Frames  []string
 		}
 
-		return spewConfig.Sdump(dump{
-			Message: e.Error(),
-			Debug:   e.errs,
-			Frames:  e.frames.ToSummaries(),
-		})
+		return strings.TrimSuffix(
+			spewConfig.Sdump(dump{
+				Message: e.Error(),
+				Debug:   e.errs,
+				Frames:  e.frames.ToSummaries(),
+			}),
+			"\n")
 	}
 
 	type dump struct {
@@ -41,8 +45,10 @@ func SDump(err error) string {
 		Debug   []error
 	}
 
-	return spewConfig.Sdump(dump{
-		Message: err.Error(),
-		Debug:   []error{err},
-	})
+	return strings.TrimSuffix(
+		spewConfig.Sdump(dump{
+			Message: err.Error(),
+			Debug:   []error{err},
+		}),
+		"\n")
 }

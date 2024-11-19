@@ -34,7 +34,7 @@ type AfterTest interface {
 	AfterTest(context.Context, *gomega.WithT)
 }
 
-// RunSuite runs the Suite.
+// RunSuite runs the test suite.
 func RunSuite(t *testing.T, suite any) {
 	t.Helper()
 
@@ -184,7 +184,7 @@ func (rs *runnableSuite) registerCustomFormatters() {
 		format.RegisterCustomFormatter(func(v any) (string, bool) {
 			switch err := v.(type) {
 			case error:
-				return errorz.SDump(err), true
+				return format.Indent + errorz.SDump(err), true
 			default:
 				return "", false
 			}
