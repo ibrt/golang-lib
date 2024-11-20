@@ -14,7 +14,6 @@ var (
 		DisablePointerAddresses: true,
 		DisableCapacities:       true,
 		SortKeys:                true,
-		SpewKeys:                true,
 	}
 )
 
