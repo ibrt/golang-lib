@@ -1,6 +1,7 @@
 package memz_test
 
 import (
+	"cmp"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -37,4 +38,16 @@ func (*MapsSuite) TestFilterMap(g *WithT) {
 	g.Expect(memz.FilterMap[int, string](nil, func(_ int, _ string) bool { return true })).To(BeNil())
 	g.Expect(memz.FilterMap[int, string](map[int]string{}, func(_ int, _ string) bool { return true })).To(Equal(map[int]string{}))
 	g.Expect(memz.FilterMap[int, string](map[int]string{1: "a", 2: "b"}, func(k int, _ string) bool { return k == 1 })).To(Equal(map[int]string{1: "a"}))
+}
+
+func (s *MapsSuite) TestTransformMapValues(g *WithT) {
+	g.Expect(memz.TransformMapValues[int, int, string](nil, memz.TransformSprintf[int])).To(BeNil())
+	g.Expect(memz.TransformMapValues(map[int]int{}, memz.TransformSprintf[int])).To(Equal(map[int]string{}))
+	g.Expect(memz.TransformMapValues(map[int]int{1: 10, 2: 20}, memz.TransformSprintf[int])).To(Equal(map[int]string{1: "10", 2: "20"}))
+}
+
+func (s *MapsSuite) TestGetSortedMapKeys(g *WithT) {
+	for i := 0; i < 10; i++ {
+		g.Expect(memz.GetSortedMapKeys(map[int]string{1: "a", 2: "b"}, cmp.Less)).To(Equal([]int{1, 2}))
+	}
 }

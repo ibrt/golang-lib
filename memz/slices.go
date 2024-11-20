@@ -72,7 +72,7 @@ func ShallowCopySlice[T any](s []T) []T {
 	return out
 }
 
-// FilterSlice makes a shallow copy a slice including only elements for which the predicate returns true.
+// FilterSlice makes a shallow copy of a slice including only elements for which the predicate returns true.
 func FilterSlice[T any](s []T, f func(t T) bool) []T {
 	if s == nil {
 		return nil
@@ -100,7 +100,7 @@ func BatchSlice[T any](s []T, batchSize int) [][]T {
 	return out
 }
 
-// TransformSlice transforms the elements of a slice.
+// TransformSlice returns a new slice built by passing all elements through the given function.
 func TransformSlice[I any, O any](s []I, f func(i I) O) []O {
 	if s == nil {
 		return nil
