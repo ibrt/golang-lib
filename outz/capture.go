@@ -5,24 +5,23 @@ import (
 	"os"
 	"sync"
 
+	"github.com/fatih/color"
+
 	"github.com/ibrt/golang-lib/errorz"
 )
 
 var (
-	m              = &sync.Mutex{}
-	isCapturing    = false
-	captureStdoutR *os.File
-	captureStdoutW *os.File
-	captureStderrR *os.File
-	captureStderrW *os.File
-	restoreFuncs   []func()
+	m                      = &sync.Mutex{}
+	isCapturing            = false
+	outR, outW, errR, errW *os.File
+	restoreFuncs           []func()
 )
-
-// RestoreFunc describe a function that restores the original streams.
-type RestoreFunc func()
 
 // SetupFunc describes a function that replaces streams with the ones for capturing.
 type SetupFunc func(out *os.File, err *os.File) RestoreFunc
+
+// RestoreFunc describe a function that restores the original streams.
+type RestoreFunc func()
 
 // SetupStandardStreams is a SetupFunc that configures the stdout/stderr streams.
 func SetupStandardStreams(out *os.File, err *os.File) RestoreFunc {
@@ -38,8 +37,25 @@ func SetupStandardStreams(out *os.File, err *os.File) RestoreFunc {
 	}
 }
 
-// MustBeginCapturing sets up the streams and begins capturing.
-func MustBeginCapturing(setupFunc SetupFunc, additionalSetupFuncs ...SetupFunc) {
+// SetupColorStreams is a SetupFunc that configures the color streams.
+func SetupColorStreams(out *os.File, err *os.File) RestoreFunc {
+	origNoColor := color.NoColor
+	origOut := color.Output
+	origErr := color.Error
+
+	color.NoColor = false
+	color.Output = out
+	color.Error = err
+
+	return func() {
+		color.NoColor = origNoColor
+		color.Output = origOut
+		color.Error = origErr
+	}
+}
+
+// MustStartCapturing sets up the streams and starts capturing.
+func MustStartCapturing(setupFunc SetupFunc, additionalSetupFuncs ...SetupFunc) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -47,43 +63,43 @@ func MustBeginCapturing(setupFunc SetupFunc, additionalSetupFuncs ...SetupFunc) 
 	isCapturing = true
 	var err error
 
-	captureStdoutR, captureStdoutW, err = os.Pipe()
+	outR, outW, err = os.Pipe()
 	errorz.MaybeMustWrap(err)
 
-	captureStderrR, captureStderrW, err = os.Pipe()
+	errR, errW, err = os.Pipe()
 	errorz.MaybeMustWrap(err)
 
 	for _, f := range append([]SetupFunc{setupFunc}, additionalSetupFuncs...) {
-		restoreFuncs = append(restoreFuncs, f(captureStdoutW, captureStderrW))
+		restoreFuncs = append(restoreFuncs, f(outW, errW))
 	}
 }
 
-// MustEndCapturing restores the original streams and returns the captured stdout/stderr.
-func MustEndCapturing() (string, string) {
+// MustStopCapturing restores the original streams and returns the captured stdout/stderr.
+func MustStopCapturing() (string, string) {
 	m.Lock()
 	defer m.Unlock()
 
 	errorz.Assertf(isCapturing, "capturing not in progress")
-	return mustEndCapture()
+	return mustStop()
 }
 
-// MustClearCapturing ensure the capturing is cleared (e.g. after a failing test).
-func MustClearCapturing() {
+// MustResetCapturing ensures the capturing is stopped (e.g. after a failing test).
+func MustResetCapturing() {
 	m.Lock()
 	defer m.Unlock()
 
 	if isCapturing {
-		mustEndCapture()
+		mustStop()
 	}
 }
 
-func mustEndCapture() (string, string) {
+func mustStop() (string, string) {
 	defer func() {
 		isCapturing = false
-		captureStdoutR = nil
-		captureStdoutW = nil
-		captureStderrR = nil
-		captureStderrW = nil
+		outR = nil
+		outW = nil
+		errR = nil
+		errW = nil
 		restoreFuncs = nil
 	}()
 
@@ -91,13 +107,13 @@ func mustEndCapture() (string, string) {
 		restoreFuncs[i]()
 	}
 
-	errorz.MaybeMustWrap(captureStdoutW.Close())
-	errorz.MaybeMustWrap(captureStderrW.Close())
+	errorz.MaybeMustWrap(outW.Close())
+	errorz.MaybeMustWrap(errW.Close())
 
-	outBuf, err := io.ReadAll(captureStdoutR)
+	outBuf, err := io.ReadAll(outR)
 	errorz.MaybeMustWrap(err)
 
-	errBuf, err := io.ReadAll(captureStderrR)
+	errBuf, err := io.ReadAll(errR)
 	errorz.MaybeMustWrap(err)
 
 	return string(outBuf), string(errBuf)

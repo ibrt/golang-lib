@@ -20,24 +20,24 @@ func TestCaptureSuite(t *testing.T) {
 }
 
 func (*CaptureSuite) TestCapturing(g *WithT) {
-	outz.MustBeginCapturing(outz.SetupStandardStreams)
-	defer outz.MustClearCapturing()
+	outz.MustStartCapturing(outz.SetupStandardStreams)
+	defer outz.MustResetCapturing()
 
 	g.Expect(fmt.Fprint(os.Stdout, "<out>")).Error().To(Succeed())
 	g.Expect(fmt.Fprint(os.Stderr, "<err>")).Error().To(Succeed())
 
-	outBuf, outErr := outz.MustEndCapturing()
+	outBuf, errBuf := outz.MustStopCapturing()
 
 	g.Expect(outBuf).To(Equal("<out>"))
-	g.Expect(outErr).To(Equal("<err>"))
+	g.Expect(errBuf).To(Equal("<err>"))
 
 	g.Expect(func() {
-		outz.MustClearCapturing()
+		outz.MustResetCapturing()
 	}).ToNot(Panic())
 }
 
-func (*CaptureSuite) TestMustClearCapturing(g *WithT) {
-	outz.MustBeginCapturing(outz.SetupStandardStreams)
-	defer outz.MustClearCapturing()
+func (*CaptureSuite) TestMustResetCapturing(g *WithT) {
+	outz.MustStartCapturing(outz.SetupStandardStreams)
+	defer outz.MustResetCapturing()
 	fmt.Println("hidden")
 }
