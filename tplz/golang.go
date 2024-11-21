@@ -8,8 +8,8 @@ import (
 	"github.com/ibrt/golang-lib/errorz"
 )
 
-// ExecuteGolang executes a text template, formatting the result as Go code.
-func ExecuteGolang(template *ttpl.Template, data any) ([]byte, error) {
+// ExecuteGo executes a text template, formatting the result as Go code.
+func ExecuteGo(template *ttpl.Template, data any) ([]byte, error) {
 	buf := &bytes.Buffer{}
 	if err := template.Execute(buf, data); err != nil {
 		return nil, errorz.Wrap(err)
@@ -18,26 +18,26 @@ func ExecuteGolang(template *ttpl.Template, data any) ([]byte, error) {
 	return format.Source(buf.Bytes())
 }
 
-// MustExecuteGolang is like ExecuteGolang but panics on error.
-func MustExecuteGolang(template *ttpl.Template, data any) []byte {
-	buf, err := ExecuteGolang(template, data)
+// MustExecuteGo is like ExecuteGo but panics on error.
+func MustExecuteGo(template *ttpl.Template, data any) []byte {
+	buf, err := ExecuteGo(template, data)
 	errorz.MaybeMustWrap(err)
 	return buf
 }
 
-// ParseAndExecuteGolang parses and executes a text template, formatting the result as Go code.
-func ParseAndExecuteGolang(template string, data any) ([]byte, error) {
+// ParseAndExecuteGo parses and executes a text template, formatting the result as Go code.
+func ParseAndExecuteGo(template string, data any) ([]byte, error) {
 	parsedTemplate, err := ttpl.New("").Parse(template)
 	if err != nil {
 		return nil, errorz.Wrap(err)
 	}
 
-	return ExecuteGolang(parsedTemplate, data)
+	return ExecuteGo(parsedTemplate, data)
 }
 
-// MustParseAndExecuteGolang is like ParseAndExecuteGolang but panics on error.
-func MustParseAndExecuteGolang(template string, data any) []byte {
-	buf, err := ParseAndExecuteGolang(template, data)
+// MustParseAndExecuteGo is like ParseAndExecuteGo but panics on error.
+func MustParseAndExecuteGo(template string, data any) []byte {
+	buf, err := ParseAndExecuteGo(template, data)
 	errorz.MaybeMustWrap(err)
 	return buf
 }

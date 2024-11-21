@@ -10,15 +10,15 @@ import (
 	"github.com/ibrt/golang-lib/tplz"
 )
 
-type GolangSuite struct {
+type GoSuite struct {
 	// intentionally empty
 }
 
-func TestGolangSuite(t *testing.T) {
-	fixturez.RunSuite(t, &GolangSuite{})
+func TestGoSuite(t *testing.T) {
+	fixturez.RunSuite(t, &GoSuite{})
 }
 
-func (*GolangSuite) TestExecuteGolang(g *WithT) {
+func (*GoSuite) TestExecuteGo(g *WithT) {
 	okTpl, err := ttpl.New("").Parse("package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"{{ . }}\") }")
 	g.Expect(err).To(Succeed())
 
@@ -28,17 +28,17 @@ func (*GolangSuite) TestExecuteGolang(g *WithT) {
 	goErrTpl, err := ttpl.New("").Parse("package main\nfuncmain() { fmt.Println(\"{{ . }}\") }")
 	g.Expect(err).To(Succeed())
 
-	g.Expect(tplz.ExecuteGolang(okTpl, "Hello World")).
+	g.Expect(tplz.ExecuteGo(okTpl, "Hello World")).
 		To(Equal([]byte("package main\n\nimport \"fmt\"\n\nfunc main() { fmt.Println(\"Hello World\") }\n")))
 
-	g.Expect(tplz.ExecuteGolang(errTpl, nil)).Error().
+	g.Expect(tplz.ExecuteGo(errTpl, nil)).Error().
 		To(MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`))
 
-	g.Expect(tplz.ExecuteGolang(goErrTpl, "Hello World")).Error().
+	g.Expect(tplz.ExecuteGo(goErrTpl, "Hello World")).Error().
 		To(MatchError("2:1: expected declaration, found funcmain"))
 }
 
-func (*GolangSuite) TestMustExecuteGolang(g *WithT) {
+func (*GoSuite) TestMustExecuteGo(g *WithT) {
 	okTpl, err := ttpl.New("").Parse("package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"{{ . }}\") }")
 	g.Expect(err).To(Succeed())
 
@@ -49,48 +49,48 @@ func (*GolangSuite) TestMustExecuteGolang(g *WithT) {
 	g.Expect(err).To(Succeed())
 
 	g.Expect(func() {
-		g.Expect(tplz.MustExecuteGolang(okTpl, "Hello World")).
+		g.Expect(tplz.MustExecuteGo(okTpl, "Hello World")).
 			To(Equal([]byte("package main\n\nimport \"fmt\"\n\nfunc main() { fmt.Println(\"Hello World\") }\n")))
 	}).ToNot(Panic())
 
 	g.Expect(func() {
-		tplz.MustExecuteGolang(errTpl, nil)
+		tplz.MustExecuteGo(errTpl, nil)
 	}).To(PanicWith(MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`)))
 
 	g.Expect(func() {
-		tplz.MustExecuteGolang(goErrTpl, "Hello World")
+		tplz.MustExecuteGo(goErrTpl, "Hello World")
 	}).To(PanicWith(MatchError("2:1: expected declaration, found funcmain")))
 }
 
-func (*GolangSuite) TestParseAndExecuteGolang(g *WithT) {
-	g.Expect(tplz.ParseAndExecuteGolang("package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"{{ . }}\") }", "Hello World")).
+func (*GoSuite) TestParseAndExecuteGo(g *WithT) {
+	g.Expect(tplz.ParseAndExecuteGo("package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"{{ . }}\") }", "Hello World")).
 		To(Equal([]byte("package main\n\nimport \"fmt\"\n\nfunc main() { fmt.Println(\"Hello World\") }\n")))
 
-	g.Expect(tplz.ParseAndExecuteGolang("{{ bad }}", "Hello World")).Error().
+	g.Expect(tplz.ParseAndExecuteGo("{{ bad }}", "Hello World")).Error().
 		To(MatchError(`template: :1: function "bad" not defined`))
 
-	g.Expect(tplz.ParseAndExecuteGolang(`{{ template "x" }}`, nil)).Error().
+	g.Expect(tplz.ParseAndExecuteGo(`{{ template "x" }}`, nil)).Error().
 		To(MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`))
 
-	g.Expect(tplz.ParseAndExecuteGolang("package main\nfuncmain() { fmt.Println(\"{{ . }}\") }", "Hello World")).Error().
+	g.Expect(tplz.ParseAndExecuteGo("package main\nfuncmain() { fmt.Println(\"{{ . }}\") }", "Hello World")).Error().
 		To(MatchError("2:1: expected declaration, found funcmain"))
 }
 
-func (*GolangSuite) TestMustParseAndExecuteGolang(g *WithT) {
+func (*GoSuite) TestMustParseAndExecuteGo(g *WithT) {
 	g.Expect(func() {
-		g.Expect(tplz.MustParseAndExecuteGolang("package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"{{ . }}\") }", "Hello World")).
+		g.Expect(tplz.MustParseAndExecuteGo("package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"{{ . }}\") }", "Hello World")).
 			To(Equal([]byte("package main\n\nimport \"fmt\"\n\nfunc main() { fmt.Println(\"Hello World\") }\n")))
 	}).ToNot(Panic())
 
 	g.Expect(func() {
-		tplz.MustParseAndExecuteGolang("{{ bad }}", "Hello World")
+		tplz.MustParseAndExecuteGo("{{ bad }}", "Hello World")
 	}).To(PanicWith(MatchError(`template: :1: function "bad" not defined`)))
 
 	g.Expect(func() {
-		tplz.MustParseAndExecuteGolang(`{{ template "x" }}`, nil)
+		tplz.MustParseAndExecuteGo(`{{ template "x" }}`, nil)
 	}).To(PanicWith(MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`)))
 
 	g.Expect(func() {
-		tplz.MustParseAndExecuteGolang("package main\nfuncmain() { fmt.Println(\"{{ . }}\") }", "Hello World")
+		tplz.MustParseAndExecuteGo("package main\nfuncmain() { fmt.Println(\"{{ . }}\") }", "Hello World")
 	}).To(PanicWith(MatchError("2:1: expected declaration, found funcmain")))
 }
