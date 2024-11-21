@@ -135,3 +135,25 @@ func (*CLISuite) TestCommand_Abs(g *WithT) {
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cmd \x1b[2mp1 p2\x1b[0m\n", consolez.IconRunner)))
 	g.Expect(errBuf).To(Equal(""))
 }
+
+func (*CLISuite) TestError_DebugFalse(g *WithT) {
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams)
+	defer outz.MustResetCapturing()
+
+	consolez.DefaultCLI.Error(fmt.Errorf("test error"), false)
+
+	outBuf, errBuf := outz.MustStopCapturing()
+	g.Expect(outBuf).To(Equal(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest error\x1b[0m\n", consolez.IconCollision)))
+	g.Expect(errBuf).To(Equal(""))
+}
+
+func (*CLISuite) TestError_DebugTrue(g *WithT) {
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams)
+	defer outz.MustResetCapturing()
+
+	consolez.DefaultCLI.Error(fmt.Errorf("test error"), true)
+
+	outBuf, errBuf := outz.MustStopCapturing()
+	g.Expect(outBuf).To(HavePrefix(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest error\x1b[0m\n(errorz.dump)", consolez.IconCollision)))
+	g.Expect(errBuf).To(Equal(""))
+}

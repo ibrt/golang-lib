@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/ibrt/golang-lib/errorz"
 	"github.com/ibrt/golang-lib/filez"
 	"github.com/ibrt/golang-lib/outz"
 	"github.com/ibrt/golang-lib/stringz"
@@ -28,19 +29,19 @@ var (
 
 // CLI provides some utilities for printing messages in CLI tools.
 type CLI struct {
-	m                     *sync.Mutex
-	hL                    int
-	addSpaceBeforeHeaders bool
-	exit                  func(code int)
+	m          *sync.Mutex
+	hL         int
+	addSpacing bool
+	exit       func(code int)
 }
 
 // NewCLI initializes a new CLI.
-func NewCLI(addSpaceBeforeHeaders bool, exit func(int)) *CLI {
+func NewCLI(addSpacing bool, exit func(int)) *CLI {
 	return &CLI{
-		m:                     &sync.Mutex{},
-		hL:                    0,
-		addSpaceBeforeHeaders: addSpaceBeforeHeaders,
-		exit:                  exit,
+		m:          &sync.Mutex{},
+		hL:         0,
+		addSpacing: addSpacing,
+		exit:       exit,
 	}
 }
 
@@ -64,7 +65,7 @@ func (c *CLI) Header(format string, a ...any) func() {
 	c.m.Lock()
 	defer c.m.Unlock()
 
-	if c.hL < 2 && c.addSpaceBeforeHeaders {
+	if c.hL < 2 && c.addSpacing {
 		fmt.Println()
 	}
 
@@ -127,4 +128,23 @@ func (c *CLI) Command(cmd string, params ...string) {
 	fmt.Printf(" %v ", cmd)
 	_, _ = outz.GetColorSecondary().Print(strings.Join(params, " "))
 	fmt.Println()
+}
+
+// Error prints an error.
+func (c *CLI) Error(err error, debug bool) {
+	c.m.Lock()
+	defer c.m.Unlock()
+
+	if c.addSpacing {
+		fmt.Println()
+	}
+
+	fmt.Print(IconCollision)
+	fmt.Print(" ")
+	_, _ = outz.GetColorHighlight().Println("Error")
+	_, _ = outz.GetColorError().Println(err.Error())
+
+	if debug {
+		fmt.Println(errorz.SDump(err))
+	}
 }
