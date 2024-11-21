@@ -10,39 +10,15 @@ import (
 	"github.com/ibrt/golang-lib/tplz"
 )
 
-type Suite struct {
+type TextSuite struct {
 	// intentionally empty
 }
 
-func TestSuite(t *testing.T) {
-	fixturez.RunSuite(t, &Suite{})
+func TestTextSuite(t *testing.T) {
+	fixturez.RunSuite(t, &TextSuite{})
 }
 
-func (*Suite) TestParseAndExecuteText(g *WithT) {
-	g.Expect(tplz.ParseAndExecuteText("{{ . }}", "<a>&</a>")).To(Equal([]byte("<a>&</a>")))
-
-	g.Expect(tplz.ParseAndExecuteText("{{ bad }}", "<a>&</a>")).Error().To(
-		MatchError(`template: :1: function "bad" not defined`))
-
-	g.Expect(tplz.ParseAndExecuteText(`{{ template "x" }}`, nil)).Error().To(
-		MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`))
-}
-
-func (*Suite) TestMustParseAndExecuteText(g *WithT) {
-	g.Expect(func() {
-		g.Expect(tplz.MustParseAndExecuteText("{{ . }}", "<a>&</a>")).To(Equal([]byte("<a>&</a>")))
-	}).ToNot(Panic())
-
-	g.Expect(func() {
-		tplz.MustParseAndExecuteText("{{ bad }}", "<a>&</a>")
-	}).To(PanicWith(MatchError(`template: :1: function "bad" not defined`)))
-
-	g.Expect(func() {
-		tplz.MustParseAndExecuteText(`{{ template "x" }}`, nil)
-	}).To(PanicWith(MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`)))
-}
-
-func (*Suite) TestExecuteText(g *WithT) {
+func (*TextSuite) TestExecuteText(g *WithT) {
 	okTpl, err := ttpl.New("").Parse("{{ . }}")
 	g.Expect(err).To(Succeed())
 
@@ -53,7 +29,7 @@ func (*Suite) TestExecuteText(g *WithT) {
 	g.Expect(tplz.ExecuteText(errTpl, nil)).Error().To(MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`))
 }
 
-func (*Suite) TestMustExecuteText(g *WithT) {
+func (*TextSuite) TestMustExecuteText(g *WithT) {
 	okTpl, err := ttpl.New("").Parse("{{ . }}")
 	g.Expect(err).To(Succeed())
 
@@ -66,5 +42,29 @@ func (*Suite) TestMustExecuteText(g *WithT) {
 
 	g.Expect(func() {
 		tplz.MustExecuteText(errTpl, nil)
+	}).To(PanicWith(MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`)))
+}
+
+func (*TextSuite) TestParseAndExecuteText(g *WithT) {
+	g.Expect(tplz.ParseAndExecuteText("{{ . }}", "<a>&</a>")).To(Equal([]byte("<a>&</a>")))
+
+	g.Expect(tplz.ParseAndExecuteText("{{ bad }}", "<a>&</a>")).Error().To(
+		MatchError(`template: :1: function "bad" not defined`))
+
+	g.Expect(tplz.ParseAndExecuteText(`{{ template "x" }}`, nil)).Error().To(
+		MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`))
+}
+
+func (*TextSuite) TestMustParseAndExecuteText(g *WithT) {
+	g.Expect(func() {
+		g.Expect(tplz.MustParseAndExecuteText("{{ . }}", "<a>&</a>")).To(Equal([]byte("<a>&</a>")))
+	}).ToNot(Panic())
+
+	g.Expect(func() {
+		tplz.MustParseAndExecuteText("{{ bad }}", "<a>&</a>")
+	}).To(PanicWith(MatchError(`template: :1: function "bad" not defined`)))
+
+	g.Expect(func() {
+		tplz.MustParseAndExecuteText(`{{ template "x" }}`, nil)
 	}).To(PanicWith(MatchError(`template: :1:12: executing "" at <{{template "x"}}>: template "x" not defined`)))
 }
