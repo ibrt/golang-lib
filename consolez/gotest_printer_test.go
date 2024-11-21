@@ -1,0 +1,79 @@
+package consolez_test
+
+import (
+	"fmt"
+	"strings"
+	"testing"
+
+	. "github.com/onsi/gomega"
+
+	"github.com/ibrt/golang-lib/consolez"
+	"github.com/ibrt/golang-lib/fixturez"
+	"github.com/ibrt/golang-lib/outz"
+)
+
+type GoTestPrinterSuite struct {
+	// intentionally empty
+}
+
+func TestGoTestPrinterSuite(t *testing.T) {
+	fixturez.RunSuite(t, &GoTestPrinterSuite{})
+}
+
+func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	defer outz.MustResetCapturing()
+
+	p := consolez.NewGoTestPrinter()
+	p.PrintLine("other")
+	p.PrintLine("coverage: 100%")
+	p.PrintLine("--- SKIP")
+	p.PrintLine("    --- SKIP")
+	p.PrintLine("SKIP")
+	p.PrintLine("    SKIP")
+	p.PrintLine("-test.shuffle=1234")
+	p.PrintLine("--- PASS")
+	p.PrintLine("    --- PASS")
+	p.PrintLine("PASS")
+	p.PrintLine("    PASS")
+	p.PrintLine("--- FAIL")
+	p.PrintLine("    --- FAIL")
+	p.PrintLine("FAIL")
+	p.PrintLine("    FAIL")
+	p.PrintLine("=== RUN")
+	p.PrintLine("    === RUN")
+	p.PrintLine("?   \tpkgn\t[no test files]")
+	p.PrintLine("?   \tunexpected")
+	p.PrintLine("ok  \tpkgn\t1s\tcoverage: 100%")
+	p.PrintLine(fmt.Sprintf("FAIL\t%v\t1s", strings.Repeat("p", 1024)))
+	p.PrintDone()
+
+	outBuf, errBuf := outz.MustStopCapturing()
+
+	g.Expect(outBuf).To(Equal(strings.Join([]string{
+		"other",
+		"\x1b[2m--- SKIP\x1b[0m",
+		"\x1b[2m    --- SKIP\x1b[0m",
+		"\x1b[2mSKIP\x1b[0m",
+		"\x1b[2m    SKIP\x1b[0m",
+		"\x1b[2m-test.shuffle=1234\x1b[0m",
+		"\x1b[32m--- PASS\x1b[0m",
+		"\x1b[32m    --- PASS\x1b[0m",
+		"\x1b[32mPASS\x1b[0m",
+		"\x1b[32m    PASS\x1b[0m",
+		"\x1b[91m--- FAIL\x1b[0m",
+		"\x1b[91m    --- FAIL\x1b[0m",
+		"\x1b[91mFAIL\x1b[0m",
+		"\x1b[91m    FAIL\x1b[0m",
+		"\x1b[1m=== RUN\x1b[0m",
+		"\x1b[1m    === RUN\x1b[0m",
+		"\x1b[2mSKIP    ........................................................pkgn [no tests]\x1b[0m",
+		"?   \tunexpected",
+		"\x1b[32mPASS    ........................................................pkgn 1s        \x1b[0m",
+		"\x1b[91mFAIL    ...ppppppppppppppppppppppppppppppppppppppppppppppppppppppppp 1s        \x1b[0m",
+		"DONE    [SKIP: 1, PASS: 1]                                           0s        ",
+		"",
+	}, "\n")))
+
+	g.Expect(errBuf).To(Equal(""))
+}
