@@ -27,12 +27,12 @@ func MustExecuteGolang(template *ttpl.Template, data any) []byte {
 
 // ParseAndExecuteGolang parses and executes a text template, formatting the result as Go code.
 func ParseAndExecuteGolang(template string, data any) ([]byte, error) {
-	buf, err := ParseAndExecuteText(template, data)
+	parsedTemplate, err := ttpl.New("").Parse(template)
 	if err != nil {
 		return nil, errorz.Wrap(err)
 	}
 
-	return format.Source(buf)
+	return ExecuteGolang(parsedTemplate, data)
 }
 
 // MustParseAndExecuteGolang is like ParseAndExecuteGolang but panics on error.

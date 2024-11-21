@@ -10,6 +10,7 @@ import (
 // ExecuteText executes a text template.
 func ExecuteText(template *ttpl.Template, data any) ([]byte, error) {
 	buf := &bytes.Buffer{}
+
 	if err := template.Execute(buf, data); err != nil {
 		return nil, errorz.Wrap(err)
 	}
@@ -31,12 +32,7 @@ func ParseAndExecuteText(template string, data any) ([]byte, error) {
 		return nil, errorz.Wrap(err)
 	}
 
-	buf := &bytes.Buffer{}
-	if err := parsedTemplate.Execute(buf, data); err != nil {
-		return nil, errorz.Wrap(err)
-	}
-
-	return buf.Bytes(), nil
+	return ExecuteText(parsedTemplate, data)
 }
 
 // MustParseAndExecuteText is like ParseAndExecuteText but panics on error.
