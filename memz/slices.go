@@ -64,10 +64,7 @@ func ShallowCopySlice[T any](s []T) []T {
 	}
 
 	out := make([]T, len(s), cap(s))
-
-	for i := 0; i < len(s); i++ {
-		out[i] = s[i]
-	}
+	copy(out, s)
 
 	return out
 }
