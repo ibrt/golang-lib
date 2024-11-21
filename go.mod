@@ -3,6 +3,7 @@ module github.com/ibrt/golang-lib
 go 1.23
 
 require (
+	github.com/axw/gocov v1.2.1
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.18.0
 	github.com/go-playground/validator/v10 v10.23.0
