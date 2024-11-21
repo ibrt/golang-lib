@@ -26,6 +26,7 @@ func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
 
 	p := consolez.NewGoTestPrinter()
 	p.PrintLine("other")
+	p.PrintLine("ok  \t\tcoverage: 0%")
 	p.PrintLine("coverage: 100%")
 	p.PrintLine("--- SKIP")
 	p.PrintLine("    --- SKIP")
@@ -52,6 +53,7 @@ func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
 
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
 		"other",
+		"\x1b[32mPASS    ..........................................................ok [no tests]\x1b[0m",
 		"\x1b[2m--- SKIP\x1b[0m",
 		"\x1b[2m    --- SKIP\x1b[0m",
 		"\x1b[2mSKIP\x1b[0m",
@@ -71,7 +73,7 @@ func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
 		"?   \tunexpected",
 		"\x1b[32mPASS    ........................................................pkgn 1s        \x1b[0m",
 		"\x1b[91mFAIL    ...ppppppppppppppppppppppppppppppppppppppppppppppppppppppppp 1s        \x1b[0m",
-		"DONE    [SKIP: 1, PASS: 1]                                           0s        ",
+		"DONE    [SKIP: 1, PASS: 2]                                           0s        ",
 		"",
 	}, "\n")))
 

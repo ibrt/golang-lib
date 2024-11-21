@@ -11,7 +11,7 @@ import (
 	"github.com/ibrt/golang-lib/stringz"
 )
 
-// GoTestPrinter implements an improved printer for "go test" output.
+// GoTestPrinter implements a printer for "go test" output.
 type GoTestPrinter interface {
 	PrintLine(line string)
 	PrintDone()
