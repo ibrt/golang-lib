@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/fatih/color"
+	"github.com/rodaine/table"
 
 	"github.com/ibrt/golang-lib/errorz"
 )
@@ -18,39 +19,49 @@ var (
 )
 
 // SetupFunc describes a function that replaces streams with the ones for capturing.
-type SetupFunc func(out *os.File, err *os.File) RestoreFunc
+type SetupFunc func(outW *os.File, errW *os.File) RestoreFunc
 
 // RestoreFunc describe a function that restores the original streams.
 type RestoreFunc func()
 
 // SetupStandardStreams is a SetupFunc that configures the stdout/stderr streams.
-func SetupStandardStreams(out *os.File, err *os.File) RestoreFunc {
-	origStdout := os.Stdout
-	origStderr := os.Stderr
+func SetupStandardStreams(outW *os.File, errW *os.File) RestoreFunc {
+	origOut := os.Stdout
+	origErr := os.Stderr
 
-	os.Stdout = out
-	os.Stderr = err
+	os.Stdout = outW
+	os.Stderr = errW
 
 	return func() {
-		os.Stdout = origStdout
-		os.Stderr = origStderr
+		os.Stdout = origOut
+		os.Stderr = origErr
 	}
 }
 
 // SetupColorStreams is a SetupFunc that configures the color streams.
-func SetupColorStreams(out *os.File, err *os.File) RestoreFunc {
+func SetupColorStreams(outW *os.File, errW *os.File) RestoreFunc {
 	origNoColor := color.NoColor
 	origOut := color.Output
 	origErr := color.Error
 
 	color.NoColor = false
-	color.Output = out
-	color.Error = err
+	color.Output = outW
+	color.Error = errW
 
 	return func() {
 		color.NoColor = origNoColor
 		color.Output = origOut
 		color.Error = origErr
+	}
+}
+
+// SetupTableStreams is a SetupFunc that configures the table streams.
+func SetupTableStreams(outW *os.File, _ *os.File) RestoreFunc {
+	origOut := table.DefaultWriter
+	table.DefaultWriter = outW
+
+	return func() {
+		table.DefaultWriter = origOut
 	}
 }
 

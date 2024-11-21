@@ -7,6 +7,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/rodaine/table"
+
 	"github.com/ibrt/golang-lib/errorz"
 	"github.com/ibrt/golang-lib/filez"
 	"github.com/ibrt/golang-lib/outz"
@@ -128,6 +130,14 @@ func (c *CLI) Command(cmd string, params ...string) {
 	fmt.Printf(" %v ", cmd)
 	_, _ = outz.GetColorSecondary().Print(strings.Join(params, " "))
 	fmt.Println()
+}
+
+// NewTable creates a new table.
+func (c *CLI) NewTable(columnHeaders ...any) table.Table {
+	return table.
+		New(columnHeaders...).
+		WithHeaderFormatter(outz.GetColorHighlight().SprintfFunc()).
+		WithFirstColumnFormatter(outz.GetColorWarning().SprintfFunc())
 }
 
 // Error prints an error.
