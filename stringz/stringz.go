@@ -5,8 +5,12 @@ import (
 	"strings"
 )
 
-// AlignRight aligns the given string to the right, at the given width, padding with dots.
+// AlignRight aligns the given string to the right, at the given width (minimum = 4), padding with dots.
 func AlignRight(s string, width int) string {
+	if width < 4 {
+		width = 4
+	}
+
 	r := []rune(s)
 
 	if len(r) > width {
