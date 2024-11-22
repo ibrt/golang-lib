@@ -20,6 +20,11 @@ var (
 	DefaultExecutor Executor = &RealExecutor{}
 )
 
+// RestoreDefaultExecutor restores the default executor.
+func RestoreDefaultExecutor() {
+	DefaultExecutor = &RealExecutor{}
+}
+
 // Executor implements the OS-level operations related to a command.
 type Executor interface {
 	ExecCmdCombinedOutput(c *Command, cmd *exec.Cmd) ([]byte, error)
