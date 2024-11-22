@@ -104,7 +104,7 @@ func (t *GoTool) getVersion() string {
 
 // GoChecksParams describes the parameters for running Go checks.
 type GoChecksParams struct {
-	Packages      []string
+	AllPackages   []string
 	BuildTags     []string
 	PrintNotices  bool
 	PrintCommands bool
@@ -112,7 +112,7 @@ type GoChecksParams struct {
 
 // MustRunGoChecks runs a set of Go checks in the current working directory.
 func MustRunGoChecks(params *GoChecksParams) {
-	errorz.Assertf(len(params.Packages) > 0, "missing packages")
+	errorz.Assertf(len(params.AllPackages) > 0, "missing all packages")
 
 	if params.PrintNotices {
 		consolez.DefaultCLI.Notice("go-checks", "preparing...")
@@ -123,12 +123,12 @@ func MustRunGoChecks(params *GoChecksParams) {
 		MustRun()
 
 	shellz.NewCommand("go", "generate").
-		AddParams(params.Packages...).
+		AddParams(params.AllPackages...).
 		SetEcho(params.PrintCommands).
 		MustRun()
 
 	shellz.NewCommand("go", "fmt").
-		AddParams(params.Packages...).
+		AddParams(params.AllPackages...).
 		SetEcho(params.PrintCommands).
 		MustRun()
 
@@ -138,7 +138,7 @@ func MustRunGoChecks(params *GoChecksParams) {
 
 	shellz.NewCommand("go", "build", "-v").
 		AddParamsIfTrue(len(params.BuildTags) > 0, fmt.Sprintf("-tags=%v", strings.Join(params.BuildTags, ","))).
-		AddParams(params.Packages...).
+		AddParams(params.AllPackages...).
 		SetEcho(params.PrintCommands).
 		MustRun()
 
@@ -149,18 +149,18 @@ func MustRunGoChecks(params *GoChecksParams) {
 	GoToolGolint.
 		GetCommand().
 		AddParams("-set_exit_status").
-		AddParams(params.Packages...).
+		AddParams(params.AllPackages...).
 		SetEcho(params.PrintCommands).
 		MustRun()
 
 	shellz.NewCommand("go", "vet").
-		AddParams(params.Packages...).
+		AddParams(params.AllPackages...).
 		SetEcho(params.PrintCommands).
 		MustRun()
 
 	GoToolStaticCheck.
 		GetCommand().
-		AddParams(params.Packages...).
+		AddParams(params.AllPackages...).
 		SetEcho(params.PrintCommands).
 		MustRun()
 
@@ -171,20 +171,21 @@ func MustRunGoChecks(params *GoChecksParams) {
 
 // GoTestsParams describes the parameters for running Go tests.
 type GoTestsParams struct {
-	Packages        []string
-	BuildTags       []string
-	TestRegexp      string
-	IgnoreCache     bool
-	Verbose         *bool
-	CoverageDirPath string
-	OpenCoverage    bool
-	PrintNotices    bool
-	PrintCommands   bool
+	AllPackages      []string
+	SelectedPackages []string
+	BuildTags        []string
+	TestRegexp       string
+	IgnoreCache      bool
+	Verbose          *bool
+	CoverageDirPath  string
+	OpenCoverage     bool
+	PrintNotices     bool
+	PrintCommands    bool
 }
 
 // MustRunGoTests runs a set of Go tests in the current working directory.
 func MustRunGoTests(params *GoTestsParams) {
-	errorz.Assertf(len(params.Packages) > 0, "missing packages")
+	errorz.Assertf(len(params.AllPackages) > 0, "missing all packages")
 	errorz.Assertf(params.CoverageDirPath != "", "missing coverage dir path")
 
 	if params.PrintNotices {
@@ -198,7 +199,7 @@ func MustRunGoTests(params *GoTestsParams) {
 	}
 
 	shellz.NewCommand("go", "generate").
-		AddParams(params.Packages...).
+		AddParams(params.AllPackages...).
 		SetEcho(params.PrintCommands).
 		MustRun()
 
@@ -215,7 +216,7 @@ func MustRunGoTests(params *GoTestsParams) {
 	}
 
 	if memz.ValNilToZero(params.Verbose) ||
-		(params.Verbose == nil && len(params.Packages) == 1 && !strings.HasSuffix(params.Packages[0], "...")) {
+		(params.Verbose == nil && len(params.SelectedPackages) == 1 && !strings.HasSuffix(params.SelectedPackages[0], "...")) {
 		cmd = cmd.AddParams("-v")
 	}
 
@@ -223,8 +224,14 @@ func MustRunGoTests(params *GoTestsParams) {
 		consolez.DefaultCLI.Notice("go-tests", "running tests...")
 	}
 
+	if len(params.SelectedPackages) > 0 {
+		cmd = cmd.AddParams(params.SelectedPackages...)
+	} else {
+		cmd = cmd.AddParams(params.AllPackages...)
+	}
+
 	p := consolez.NewGoTestPrinter()
-	cmd.AddParams(params.Packages...).MustLines(p.PrintLine)
+	cmd.MustLines(p.PrintLine)
 	p.PrintDone()
 
 	if params.PrintNotices {

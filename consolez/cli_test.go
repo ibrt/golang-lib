@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/alecthomas/kong"
 	. "github.com/onsi/gomega"
 
 	"github.com/ibrt/golang-lib/consolez"
@@ -20,6 +21,30 @@ type CLISuite struct {
 
 func TestCLISuite(t *testing.T) {
 	fixturez.RunSuite(t, &CLISuite{})
+}
+
+func (*CLISuite) TestTool(g *WithT) {
+	type CLI struct {
+		Command struct {
+			Arg string `arg:"" help:"Positional argument."`
+		} `cmd:"" help:"Command"`
+		Flag string `flag:"" help:"Flag."`
+	}
+
+	k, err := kong.New(&CLI{})
+	g.Expect(err).To(Succeed())
+
+	kCtx, err := k.Parse([]string{"--flag=flag-value", "command", "arg-value"})
+	g.Expect(err).To(Succeed())
+
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	defer outz.MustResetCapturing()
+
+	consolez.DefaultCLI.Tool("Tool", kCtx)
+
+	outBuf, errBuf := outz.MustStopCapturing()
+	g.Expect(outBuf).To(Equal(fmt.Sprintf("┌─────────────────┐\n│ %v \x1b[1mTool\x1b[0m command │\n└─────────────────┘\n\n\x1b[1mInput          Value       \n\x1b[22m\x1b[33m--flag=STRING  \x1b[0mflag-value  \n\x1b[33m<arg>          \x1b[0marg-value   \n", consolez.IconRocket)))
+	g.Expect(errBuf).To(Equal(""))
 }
 
 func (*CLISuite) TestBanner(g *WithT) {

@@ -11,13 +11,13 @@ func main() {
 	consolez.DefaultCLI.Banner("golang-lib", "Validate")
 
 	devz.MustRunGoChecks(&devz.GoChecksParams{
-		Packages:      []string{"./..."},
+		AllPackages:   []string{"./..."},
 		PrintNotices:  true,
 		PrintCommands: true,
 	})
 
 	devz.MustRunGoTests(&devz.GoTestsParams{
-		Packages:        []string{"./..."},
+		AllPackages:     []string{"./..."},
 		CoverageDirPath: filepath.Join(".build", "coverage"),
 		OpenCoverage:    true,
 		PrintNotices:    true,

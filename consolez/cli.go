@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/alecthomas/kong"
 	"github.com/rodaine/table"
 
 	"github.com/ibrt/golang-lib/errorz"
@@ -44,6 +45,35 @@ func NewCLI(addSpacing bool, exit func(int)) *CLI {
 		hL:         0,
 		addSpacing: addSpacing,
 		exit:       exit,
+	}
+}
+
+// Tool introduces a command line tool.
+func (c *CLI) Tool(toolName string, k *kong.Context) {
+	commandParts := make([]string, 0)
+	options := make([][]string, 0)
+
+	for _, p := range k.Path {
+		if p.Command != nil {
+			commandParts = append(commandParts, p.Command.Name)
+		} else if p.Flag != nil {
+			options = append(options, []string{
+				p.Flag.Summary(),
+				fmt.Sprintf("%v", p.Flag.Target.Interface()),
+			})
+		} else if p.Positional != nil {
+			options = append(options, []string{
+				p.Positional.Summary(),
+				fmt.Sprintf("%v", p.Positional.Target.Interface()),
+			})
+		}
+	}
+
+	c.Banner(toolName, strings.Join(commandParts, " "))
+
+	if len(options) > 0 {
+		fmt.Println()
+		c.NewTable("Input", "Value").SetRows(options).Print()
 	}
 }
 
