@@ -27,27 +27,33 @@ var (
 
 // ExecutionError describes an error.
 type ExecutionError struct {
-	cmd      string
-	params   []string
-	dir      string
-	env      map[string]string
-	exitCode int
-	err      error
+	cmd            string
+	params         []string
+	dir            string
+	env            map[string]string
+	exitCode       int
+	capturedStderr string
+	err            error
 }
 
 // NewExecutionError initializes a new execution error.
 func NewExecutionError(err error, c *Command) *ExecutionError {
 	e := &ExecutionError{
-		cmd:      c.cmd,
-		params:   memz.ShallowCopySlice(c.params),
-		dir:      c.dir,
-		env:      memz.ShallowCopyMap(c.env),
-		exitCode: -1,
-		err:      err,
+		cmd:            c.cmd,
+		params:         memz.ShallowCopySlice(c.params),
+		dir:            c.dir,
+		env:            memz.ShallowCopyMap(c.env),
+		exitCode:       -1,
+		capturedStderr: "",
+		err:            err,
 	}
 
 	if eErr, ok := errorz.As[*exec.ExitError](err); ok {
 		e.exitCode = eErr.ExitCode()
+
+		if len(eErr.Stderr) > 0 {
+			e.capturedStderr = string(eErr.Stderr)
+		}
 	}
 
 	return e
@@ -76,6 +82,11 @@ func (e *ExecutionError) GetEnv() map[string]string {
 // GetExitCode returns the originating exit code.
 func (e *ExecutionError) GetExitCode() int {
 	return e.exitCode
+}
+
+// GetCapturedStderr returns the originating captured standard error (if available).
+func (e *ExecutionError) GetCapturedStderr() string {
+	return e.capturedStderr
 }
 
 // Error implements the error interface.
@@ -208,10 +219,15 @@ func (c *Command) MustRun() {
 
 // Output runs the command and returns a buffer containing the resulting standard output.
 // Standard error is not redirected.
-func (c *Command) Output() ([]byte, error) {
+func (c *Command) Output(echoStderr bool) ([]byte, error) {
 	c.maybeEcho(false)
 	cmd := c.newCmd()
-	cmd.Stderr = os.Stderr
+
+	if echoStderr {
+		cmd.Stderr = os.Stderr
+	} else {
+		cmd.Stderr = nil
+	}
 
 	out, err := cmd.Output()
 	if err != nil {
@@ -222,15 +238,15 @@ func (c *Command) Output() ([]byte, error) {
 }
 
 // MustOutput is like Output but panics on error.
-func (c *Command) MustOutput() []byte {
-	out, err := c.Output()
+func (c *Command) MustOutput(echoStderr bool) []byte {
+	out, err := c.Output(echoStderr)
 	errorz.MaybeMustWrap(err)
 	return out
 }
 
 // OutputString is like Output but returns a string.
-func (c *Command) OutputString() (string, error) {
-	buf, err := c.Output()
+func (c *Command) OutputString(echoStderr bool) (string, error) {
+	buf, err := c.Output(echoStderr)
 	if err != nil {
 		return "", errorz.Wrap(err)
 	}
@@ -239,8 +255,8 @@ func (c *Command) OutputString() (string, error) {
 }
 
 // MustOutputString is like OutputString but panics on error.
-func (c *Command) MustOutputString() string {
-	buf, err := c.OutputString()
+func (c *Command) MustOutputString(echoStderr bool) string {
+	buf, err := c.OutputString(echoStderr)
 	errorz.MaybeMustWrap(err)
 	return buf
 }

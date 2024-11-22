@@ -96,7 +96,7 @@ func (*CommandSuite) TestOutput_Success(g *WithT) {
 	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
-	out, err := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).Output()
+	out, err := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).Output(true)
 	g.Expect(err).To(Succeed())
 	g.Expect(out).ToNot(BeNil())
 	g.Expect(string(out)).To(Equal("     1\tinput"))
@@ -106,11 +106,11 @@ func (*CommandSuite) TestOutput_Success(g *WithT) {
 	g.Expect(errBuf).To(Equal(""))
 }
 
-func (*CommandSuite) TestOutput_Error(g *WithT) {
+func (*CommandSuite) TestOutput_Error_EchoStderrTrue(g *WithT) {
 	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
-	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").Output()
+	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").Output(true)
 	g.Expect(out).To(BeEmpty())
 	g.Expect(err).ToNot(Succeed())
 
@@ -121,6 +121,7 @@ func (*CommandSuite) TestOutput_Error(g *WithT) {
 	g.Expect(eErr.GetDir()).To(BeEmpty())
 	g.Expect(eErr.GetEnv()).To(BeEmpty())
 	g.Expect(eErr.GetExitCode()).To(Equal(1))
+	g.Expect(eErr.GetCapturedStderr()).To(BeEmpty())
 	g.Expect(eErr.Error()).To(Equal("execution error: exit status 1"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
@@ -128,12 +129,35 @@ func (*CommandSuite) TestOutput_Error(g *WithT) {
 	g.Expect(errBuf).To(Equal("cat: cae0e988-f55b-4803-a471-a877b686d1a8: No such file or directory\n"))
 }
 
+func (*CommandSuite) TestOutput_Error_EchoStderrFalse(g *WithT) {
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	defer outz.MustResetCapturing()
+
+	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").Output(false)
+	g.Expect(out).To(BeEmpty())
+	g.Expect(err).ToNot(Succeed())
+
+	eErr, ok := errorz.As[*shellz.ExecutionError](err)
+	g.Expect(ok).To(BeTrue())
+	g.Expect(eErr.GetCommand()).To(Equal("cat"))
+	g.Expect(eErr.GetParams()).To(Equal([]string{"cae0e988-f55b-4803-a471-a877b686d1a8"}))
+	g.Expect(eErr.GetDir()).To(BeEmpty())
+	g.Expect(eErr.GetEnv()).To(BeEmpty())
+	g.Expect(eErr.GetExitCode()).To(Equal(1))
+	g.Expect(eErr.GetCapturedStderr()).To(Equal("cat: cae0e988-f55b-4803-a471-a877b686d1a8: No such file or directory\n"))
+	g.Expect(eErr.Error()).To(Equal("execution error: exit status 1"))
+
+	outBuf, errBuf := outz.MustStopCapturing()
+	g.Expect(outBuf).To(Equal(""))
+	g.Expect(errBuf).To(Equal(""))
+}
+
 func (*CommandSuite) TestMustOutput_Success(g *WithT) {
 	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
-		out := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).MustOutput()
+		out := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).MustOutput(true)
 		g.Expect(out).ToNot(BeNil())
 		g.Expect(string(out)).To(Equal("     1\tinput"))
 	}).ToNot(Panic())
@@ -148,7 +172,7 @@ func (*CommandSuite) TestMustOutput_Error(g *WithT) {
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
-		shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").MustOutput()
+		shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").MustOutput(true)
 	}).To(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()
@@ -160,7 +184,7 @@ func (*CommandSuite) TestOutputString_Success(g *WithT) {
 	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
-	out, err := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).OutputString()
+	out, err := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).OutputString(true)
 	g.Expect(err).To(Succeed())
 	g.Expect(out).ToNot(BeNil())
 	g.Expect(out).To(Equal("     1\tinput"))
@@ -174,7 +198,7 @@ func (*CommandSuite) TestOutputString_Error(g *WithT) {
 	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
-	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").OutputString()
+	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").OutputString(true)
 	g.Expect(out).To(BeEmpty())
 	g.Expect(err).ToNot(Succeed())
 
@@ -197,7 +221,7 @@ func (*CommandSuite) TestMustOutputString_Success(g *WithT) {
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
-		out := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).MustOutputString()
+		out := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).MustOutputString(true)
 		g.Expect(out).ToNot(BeNil())
 		g.Expect(string(out)).To(Equal("     1\tinput"))
 	}).ToNot(Panic())
@@ -212,7 +236,7 @@ func (*CommandSuite) TestMustOutputString_Error(g *WithT) {
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
-		shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").MustOutputString()
+		shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").MustOutputString(true)
 	}).To(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()

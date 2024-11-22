@@ -87,7 +87,7 @@ func (t *GoTool) getVersion() string {
 
 	func() {
 		defer func() { recover() }()
-		out := shellz.NewCommand("go", "list", "-m", t.pkg).SetEcho(false).MustOutputString()
+		out := shellz.NewCommand("go", "list", "-m", t.pkg).SetEcho(false).MustCombinedOutputString()
 		t.currentVersion = strings.TrimSpace(strings.TrimPrefix(out, t.pkg))
 	}()
 
@@ -234,23 +234,19 @@ func MustRunGoTests(params *GoTestsParams) {
 	cmd.MustLines(p.PrintLine)
 	p.PrintDone()
 
-	if params.PrintNotices {
-		consolez.DefaultCLI.Notice("go-tests", "processing coverage...")
-	}
-
 	coverageJSON := processGoCoverage(params)
 	consolez.NewCoveragePrinter().Print(jsonz.MustUnmarshal[*consolez.Coverage](coverageJSON))
 
 	if params.OpenCoverage {
-		if params.PrintNotices {
-			consolez.DefaultCLI.Notice("go-tests", "opening coverage...")
-		}
-
 		openGoCoverage(params, coverageJSON)
 	}
 }
 
 func processGoCoverage(params *GoTestsParams) []byte {
+	if params.PrintNotices {
+		consolez.DefaultCLI.Notice("go-tests", "processing coverage...")
+	}
+
 	coverageOutLines := memz.FilterSlice(
 		strings.Split(filez.MustReadFileString(filepath.Join(params.CoverageDirPath, "coverage.out")), "\n"),
 		func(l string) bool {
@@ -265,7 +261,7 @@ func processGoCoverage(params *GoTestsParams) []byte {
 	coverageJSON := GoToolGoCov.
 		GetCommand().
 		AddParams("convert", filepath.Join(params.CoverageDirPath, "coverage.out")).
-		MustOutput()
+		MustOutput(false)
 
 	filez.MustWriteFile(
 		filepath.Join(params.CoverageDirPath, "coverage.json"),
@@ -276,11 +272,15 @@ func processGoCoverage(params *GoTestsParams) []byte {
 }
 
 func openGoCoverage(params *GoTestsParams, coverageJSON []byte) {
+	if params.PrintNotices {
+		consolez.DefaultCLI.Notice("go-tests", "opening coverage...")
+	}
+
 	coverageHTML := GoToolGoCovHTML.
 		GetCommand().
 		AddParams("-t", "golang").
 		SetIn(bytes.NewReader(coverageJSON)).
-		MustOutput()
+		MustOutput(false)
 
 	filez.MustWriteFile(
 		filepath.Join(params.CoverageDirPath, "coverage.html"),
