@@ -3,4 +3,4 @@ set -e
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 go mod tidy
-exec go run -trimpath "./internal/validate" "$@"
+exec go run -trimpath "./internal/dev" "$@"
