@@ -35,7 +35,7 @@ func (s *Suite) TestKindStructOrStructPtr(g *WithT) {
 		make(chan struct{}),
 	} {
 		err := vldz.ValidateStruct(&validatableStruct{Value: v})
-		g.Expect(err).ToNot(Succeed())
+		g.Expect(err).To(HaveOccurred())
 
 		vErr, ok := errorz.As[*vldz.ValidationError](err)
 		g.Expect(ok).To(BeTrue())
@@ -62,7 +62,7 @@ func (*Suite) TestValidateStruct(g *WithT) {
 
 	{
 		err := vldz.ValidateStruct(&validatableStruct{})
-		g.Expect(err).ToNot(Succeed())
+		g.Expect(err).To(HaveOccurred())
 
 		vErr, ok := errorz.As[*vldz.ValidationError](err)
 		g.Expect(ok).To(BeTrue())
@@ -88,7 +88,7 @@ func (*Suite) TestValidateStruct(g *WithT) {
 
 	{
 		err := vldz.ValidateStruct("")
-		g.Expect(err).ToNot(Succeed())
+		g.Expect(err).To(HaveOccurred())
 
 		vErr, ok := errorz.As[*vldz.ValidationError](err)
 		g.Expect(ok).To(BeTrue())

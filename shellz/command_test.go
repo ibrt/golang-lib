@@ -46,7 +46,7 @@ func (*CommandSuite) TestRun_Error(g *WithT) {
 	defer outz.MustResetCapturing()
 
 	err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").Run()
-	g.Expect(err).ToNot(Succeed())
+	g.Expect(err).To(HaveOccurred())
 
 	eErr, ok := errorz.As[*shellz.ExecutionError](err)
 	g.Expect(ok).To(BeTrue())
@@ -112,7 +112,7 @@ func (*CommandSuite) TestOutput_Error_EchoStderrTrue(g *WithT) {
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").Output(true)
 	g.Expect(out).To(BeEmpty())
-	g.Expect(err).ToNot(Succeed())
+	g.Expect(err).To(HaveOccurred())
 
 	eErr, ok := errorz.As[*shellz.ExecutionError](err)
 	g.Expect(ok).To(BeTrue())
@@ -135,7 +135,7 @@ func (*CommandSuite) TestOutput_Error_EchoStderrFalse(g *WithT) {
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").Output(false)
 	g.Expect(out).To(BeEmpty())
-	g.Expect(err).ToNot(Succeed())
+	g.Expect(err).To(HaveOccurred())
 
 	eErr, ok := errorz.As[*shellz.ExecutionError](err)
 	g.Expect(ok).To(BeTrue())
@@ -200,7 +200,7 @@ func (*CommandSuite) TestOutputString_Error(g *WithT) {
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").OutputString(true)
 	g.Expect(out).To(BeEmpty())
-	g.Expect(err).ToNot(Succeed())
+	g.Expect(err).To(HaveOccurred())
 
 	eErr, ok := errorz.As[*shellz.ExecutionError](err)
 	g.Expect(ok).To(BeTrue())
@@ -279,7 +279,7 @@ func (*CommandSuite) TestCombinedOutput_Error(g *WithT) {
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").CombinedOutput()
 	g.Expect(out).To(BeEmpty())
-	g.Expect(err).ToNot(Succeed())
+	g.Expect(err).To(HaveOccurred())
 
 	eErr, ok := errorz.As[*shellz.ExecutionError](err)
 	g.Expect(ok).To(BeTrue())
@@ -330,7 +330,7 @@ func (*CommandSuite) TestCombinedOutputString_Error(g *WithT) {
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").CombinedOutputString()
 	g.Expect(out).To(BeEmpty())
-	g.Expect(err).ToNot(Succeed())
+	g.Expect(err).To(HaveOccurred())
 
 	eErr, ok := errorz.As[*shellz.ExecutionError](err)
 	g.Expect(ok).To(BeTrue())
@@ -445,7 +445,7 @@ func (*CommandSuite) TestLines_Error(g *WithT) {
 		defer m.Unlock()
 		receivedLines = append(receivedLines, line)
 	})
-	g.Expect(err).ToNot(Succeed())
+	g.Expect(err).To(HaveOccurred())
 
 	eErr, ok := errorz.As[*shellz.ExecutionError](err)
 	g.Expect(ok).To(BeTrue())
@@ -477,7 +477,7 @@ func (*CommandSuite) TestLines_Error_Start(g *WithT) {
 		defer m.Unlock()
 		receivedLines = append(receivedLines, line)
 	})
-	g.Expect(err).ToNot(Succeed())
+	g.Expect(err).To(HaveOccurred())
 
 	eErr, ok := errorz.As[*shellz.ExecutionError](err)
 	g.Expect(ok).To(BeTrue())
@@ -508,7 +508,7 @@ func (*CommandSuite) TestLines_Error_LongLine(g *WithT) {
 		defer m.Unlock()
 		receivedLines = append(receivedLines, line)
 	})
-	g.Expect(err).ToNot(Succeed())
+	g.Expect(err).To(HaveOccurred())
 
 	eErr, ok := errorz.As[*shellz.ExecutionError](err)
 	g.Expect(ok).To(BeTrue())
