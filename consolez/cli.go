@@ -188,3 +188,14 @@ func (c *CLI) Error(err error, debug bool) {
 		fmt.Println(errorz.SDump(err))
 	}
 }
+
+// Recover calls Error on a recovered panic and exits.
+func (c *CLI) Recover(debug bool) {
+	if err := errorz.MaybeWrapRecover(recover()); err != nil {
+		c.Error(err, debug)
+		fmt.Println()
+		c.exit(1)
+	}
+
+	fmt.Println()
+}

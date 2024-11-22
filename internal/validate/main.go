@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+	defer consolez.DefaultCLI.Recover(true)
 	consolez.DefaultCLI.Banner("golang-lib", "Validate")
 
 	devz.MustRunGoChecks(&devz.GoChecksParams{

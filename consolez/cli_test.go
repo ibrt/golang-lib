@@ -193,3 +193,21 @@ func (*CLISuite) TestError_DebugTrue(g *WithT) {
 	g.Expect(outBuf).To(HavePrefix(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest error\x1b[0m\n(errorz.dump)", consolez.IconCollision)))
 	g.Expect(errBuf).To(Equal(""))
 }
+
+func (*CLISuite) TestRecover(g *WithT) {
+	c := consolez.NewCLI(true, func(code int) {
+		g.Expect(code).To(Equal(1))
+	})
+
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	defer outz.MustResetCapturing()
+
+	defer func() {
+		outBuf, errBuf := outz.MustStopCapturing()
+		g.Expect(outBuf).To(HavePrefix(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest panic\x1b[0m\n(errorz.dump)", consolez.IconCollision)))
+		g.Expect(errBuf).To(Equal(""))
+	}()
+
+	defer c.Recover(true)
+	panic("test panic")
+}
