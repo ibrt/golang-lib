@@ -87,10 +87,10 @@ func (*CoveragePrinterSuite) TestCoveragePrinter(g *WithT) {
 	outBuf, errBuf := outz.MustStopCapturing()
 
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
-		"\x1b[91mLOWC    ........................................................lowp  25.0% [1/4]\x1b[0m",
-		"\x1b[33mMEDC    ........................................................medp  75.0% [3/4]\x1b[0m",
-		"\x1b[32mHIGC    ........................................................higp 100.0% [4/4]\x1b[0m",
-		"\x1b[32mHIGC    .......................................................nostm 100.0% [0/0]\x1b[0m",
+		"\x1b[91mLOWC    lowp                                                          25.0% [1/4]\x1b[0m",
+		"\x1b[33mMEDC    medp                                                          75.0% [3/4]\x1b[0m",
+		"\x1b[32mHIGC    higp                                                         100.0% [4/4]\x1b[0m",
+		"\x1b[32mHIGC    nostm                                                        100.0% [0/0]\x1b[0m",
 		"\x1b[32mHIGC    ...ppppppppppppppppppppppppppppppppppppppppppppppppppppppppp 100.0% [0/0]\x1b[0m",
 		/*   */ "DONE    [LOWC: 1, MEDC: 1, HIGC: 3]                                   66.7% [8/12]",
 		"",
@@ -119,7 +119,7 @@ func (*CoveragePrinterSuite) TestCoveragePrinterNoStatements(g *WithT) {
 	outBuf, errBuf := outz.MustStopCapturing()
 
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
-		"\x1b[32mHIGC    .......................................................nostm 100.0% [0/0]\x1b[0m",
+		"\x1b[32mHIGC    nostm                                                        100.0% [0/0]\x1b[0m",
 		/*   */ "DONE    [LOWC: 0, MEDC: 0, HIGC: 1]                                  100.0% [0/0]",
 		"",
 	}, "\n")))

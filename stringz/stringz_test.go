@@ -24,6 +24,13 @@ func (*Suite) TestAlignRight(g *WithT) {
 	g.Expect(stringz.AlignRight("abcdef", 4)).To(Equal("...f"))
 }
 
+func (*Suite) TestTruncateLeft(g *WithT) {
+	g.Expect(stringz.TruncateLeft("abcd", 4)).To(Equal("abcd"))
+	g.Expect(stringz.TruncateLeft("cd", 2)).To(Equal("cd"))
+	g.Expect(stringz.TruncateLeft("abcd", 6)).To(Equal("abcd"))
+	g.Expect(stringz.TruncateLeft("abcdef", 4)).To(Equal("...f"))
+}
+
 func (*Suite) TestEnsurePrefix(g *WithT) {
 	g.Expect(stringz.EnsurePrefix("ab", "a")).To(Equal("ab"))
 	g.Expect(stringz.EnsurePrefix("b", "a")).To(Equal("ab"))

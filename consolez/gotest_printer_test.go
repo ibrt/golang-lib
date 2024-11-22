@@ -53,7 +53,7 @@ func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
 
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
 		"other",
-		"\x1b[32mPASS    ..........................................................ok [no tests]\x1b[0m",
+		"\x1b[32mPASS    ok                                                           [no tests]\x1b[0m",
 		"\x1b[2m--- SKIP\x1b[0m",
 		"\x1b[2m    --- SKIP\x1b[0m",
 		"\x1b[2mSKIP\x1b[0m",
@@ -69,9 +69,9 @@ func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
 		"\x1b[91m    FAIL\x1b[0m",
 		"\x1b[1m=== RUN\x1b[0m",
 		"\x1b[1m    === RUN\x1b[0m",
-		"\x1b[2mSKIP    ........................................................pkgn [no tests]\x1b[0m",
+		"\x1b[2mSKIP    pkgn                                                         [no tests]\x1b[0m",
 		"?   \tunexpected",
-		"\x1b[32mPASS    ........................................................pkgn 1s        \x1b[0m",
+		"\x1b[32mPASS    pkgn                                                         1s        \x1b[0m",
 		"\x1b[91mFAIL    ...ppppppppppppppppppppppppppppppppppppppppppppppppppppppppp 1s        \x1b[0m",
 		"DONE    [SKIP: 1, PASS: 2]                                           0s        ",
 		"",

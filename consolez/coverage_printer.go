@@ -82,7 +82,7 @@ func (p *coveragePrinter) Print(coverage *Coverage) {
 		_, _ = clr.Printf(
 			fmt.Sprintf("%%v    %%-%vv %%6v [%%v/%%v]", p.maxPkgLen),
 			pfx,
-			stringz.AlignRight(pkg.Name, p.maxPkgLen),
+			stringz.TruncateLeft(pkg.Name, p.maxPkgLen),
 			fmt.Sprintf("%.1f%%", pct),
 			rch,
 			tot)

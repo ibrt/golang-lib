@@ -127,7 +127,7 @@ func (p *goTestPrinter) maybeHandleSummaryLine(line string) bool {
 	_, _ = clr.Printf(
 		fmt.Sprintf("%%v    %%-%vv %%v", p.maxPkgLen),
 		pfx,
-		stringz.AlignRight(lineParts[1], p.maxPkgLen),
+		stringz.TruncateLeft(lineParts[1], p.maxPkgLen),
 		strings.Join(lineParts[2:], " "))
 	fmt.Print("\n")
 

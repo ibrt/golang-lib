@@ -24,6 +24,19 @@ func AlignRight(s string, width int) string {
 	return string(r)
 }
 
+// TruncateLeft truncates the given string on the left if longer than maxWidth (minimum = 4).
+func TruncateLeft(s string, maxWidth int) string {
+	if maxWidth < 4 {
+		maxWidth = 4
+	}
+
+	if r := []rune(s); len(r) > maxWidth {
+		return fmt.Sprintf("...%v", string(r[len(r)-maxWidth+3:]))
+	}
+
+	return s
+}
+
 // EnsureSuffix ensures that the string has the given (non-repeated) suffix.
 func EnsureSuffix(s, suffix string) string {
 	return strings.TrimSuffix(s, suffix) + suffix
