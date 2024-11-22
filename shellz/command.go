@@ -16,7 +16,8 @@ import (
 )
 
 var (
-	defaultExecutor Executor = &realExecutor{}
+	// DefaultExecutor is the default Executor for commands.
+	DefaultExecutor Executor = &RealExecutor{}
 )
 
 // Executor implements the OS-level operations related to a command.
@@ -31,47 +32,48 @@ type Executor interface {
 	SyscallExec(c *Command, argv0 string, argv []string, envv []string) error
 }
 
-type realExecutor struct {
+// RealExecutor implements the Executor interface and actually runs commands on the host.
+type RealExecutor struct {
 	// intentionally empty
 }
 
 // ExecCmdCombinedOutput implements the Executor interface.
-func (e *realExecutor) ExecCmdCombinedOutput(_ *Command, cmd *exec.Cmd) ([]byte, error) {
+func (e *RealExecutor) ExecCmdCombinedOutput(_ *Command, cmd *exec.Cmd) ([]byte, error) {
 	return cmd.CombinedOutput()
 }
 
 // ExecCmdOutput implements the Executor interface.
-func (e *realExecutor) ExecCmdOutput(_ *Command, cmd *exec.Cmd) ([]byte, error) {
+func (e *RealExecutor) ExecCmdOutput(_ *Command, cmd *exec.Cmd) ([]byte, error) {
 	return cmd.Output()
 }
 
 // ExecCmdRun implements the Executor interface.
-func (e *realExecutor) ExecCmdRun(_ *Command, cmd *exec.Cmd) error {
+func (e *RealExecutor) ExecCmdRun(_ *Command, cmd *exec.Cmd) error {
 	return cmd.Run()
 }
 
 // ExecCmdStart implements the Executor interface.
-func (e *realExecutor) ExecCmdStart(_ *Command, cmd *exec.Cmd) error {
+func (e *RealExecutor) ExecCmdStart(_ *Command, cmd *exec.Cmd) error {
 	return cmd.Start()
 }
 
 // ExecCmdWait implements the Executor interface.
-func (e *realExecutor) ExecCmdWait(_ *Command, cmd *exec.Cmd) error {
+func (e *RealExecutor) ExecCmdWait(_ *Command, cmd *exec.Cmd) error {
 	return cmd.Wait()
 }
 
 // ExecLookPath implements the Executor interface.
-func (e *realExecutor) ExecLookPath(_ *Command, file string) (string, error) {
+func (e *RealExecutor) ExecLookPath(_ *Command, file string) (string, error) {
 	return exec.LookPath(file)
 }
 
 // OSChdir implements the Executor interface.
-func (e *realExecutor) OSChdir(_ *Command, dir string) error {
+func (e *RealExecutor) OSChdir(_ *Command, dir string) error {
 	return os.Chdir(dir)
 }
 
 // SyscallExec implements the Executor interface.
-func (e *realExecutor) SyscallExec(_ *Command, argv0 string, argv []string, envv []string) error {
+func (e *RealExecutor) SyscallExec(_ *Command, argv0 string, argv []string, envv []string) error {
 	return syscall.Exec(argv0, argv, envv)
 }
 
@@ -169,9 +171,10 @@ type Command struct {
 // NewCommand creates a new Command.
 func NewCommand(cmd string, params ...string) *Command {
 	return &Command{
-		cmd:    cmd,
-		params: memz.ShallowCopySlice(params),
-		env:    make(map[string]string),
+		cmd:      cmd,
+		params:   memz.ShallowCopySlice(params),
+		env:      make(map[string]string),
+		executor: DefaultExecutor,
 	}
 }
 
@@ -261,14 +264,6 @@ func (c *Command) SetExecutor(executor Executor) *Command {
 	return cc
 }
 
-func (c *Command) getExecutor() Executor {
-	if c.executor != nil {
-		return c.executor
-	}
-
-	return defaultExecutor
-}
-
 // Run runs the command.
 func (c *Command) Run() error {
 	c.maybeEcho(true)
@@ -276,7 +271,7 @@ func (c *Command) Run() error {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	if err := c.getExecutor().ExecCmdRun(c, cmd); err != nil {
+	if err := c.executor.ExecCmdRun(c, cmd); err != nil {
 		return NewExecutionError(err, c)
 	}
 
@@ -300,7 +295,7 @@ func (c *Command) Output(echoStderr bool) ([]byte, error) {
 		cmd.Stderr = nil
 	}
 
-	out, err := c.getExecutor().ExecCmdOutput(c, cmd)
+	out, err := c.executor.ExecCmdOutput(c, cmd)
 	if err != nil {
 		return nil, NewExecutionError(err, c)
 	}
@@ -336,7 +331,7 @@ func (c *Command) MustOutputString(echoStderr bool) string {
 func (c *Command) CombinedOutput() ([]byte, error) {
 	c.maybeEcho(false)
 
-	out, err := c.getExecutor().ExecCmdCombinedOutput(c, c.newCmd())
+	out, err := c.executor.ExecCmdCombinedOutput(c, c.newCmd())
 	if err != nil {
 		return nil, NewExecutionError(err, c)
 	}
@@ -392,13 +387,13 @@ func (c *Command) Lines(lineFunc func(string)) error {
 	go c.handleLines(wg, outR, callLineFunc)
 	go c.handleLines(wg, errR, callLineFunc)
 
-	if err := c.getExecutor().ExecCmdStart(c, cmd); err != nil {
+	if err := c.executor.ExecCmdStart(c, cmd); err != nil {
 		return NewExecutionError(err, c)
 	}
 
 	wg.Wait()
 
-	if err := c.getExecutor().ExecCmdWait(c, cmd); err != nil {
+	if err := c.executor.ExecCmdWait(c, cmd); err != nil {
 		return NewExecutionError(err, c)
 	}
 
@@ -439,20 +434,19 @@ func (c *Command) MustLines(lineFunc func(string)) {
 // Exec execs the command (i.e. replaces the current process).
 func (c *Command) Exec() error {
 	c.maybeEcho(true)
-	executor := c.getExecutor()
 
-	binFilePath, err := executor.ExecLookPath(c, c.cmd)
+	binFilePath, err := c.executor.ExecLookPath(c, c.cmd)
 	if err != nil {
 		return NewExecutionError(err, c)
 	}
 
 	if c.dir != "" {
-		if err := executor.OSChdir(c, c.dir); err != nil {
+		if err := c.executor.OSChdir(c, c.dir); err != nil {
 			return NewExecutionError(err, c)
 		}
 	}
 
-	if err := executor.SyscallExec(c, binFilePath, append([]string{c.cmd}, c.params...), c.newEnviron()); err != nil {
+	if err := c.executor.SyscallExec(c, binFilePath, append([]string{c.cmd}, c.params...), c.newEnviron()); err != nil {
 		return NewExecutionError(err, c)
 	}
 
