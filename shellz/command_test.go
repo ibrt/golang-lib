@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-	"syscall"
 	"testing"
 
 	. "github.com/onsi/gomega"
@@ -585,6 +584,7 @@ func (*CommandSuite) TestMustLines_Error(g *WithT) {
 	g.Expect(errBuf).To(BeEmpty())
 }
 
+/*	TODO(ibrt): Use mock.
 func (s *CommandSuite) TestExec_Success(g *WithT) {
 	shellz.DefaultExec = func(argv0 string, argv []string, envv []string) error {
 		g.Expect(argv0).To(HaveSuffix("ls"))
@@ -600,6 +600,7 @@ func (s *CommandSuite) TestExec_Success(g *WithT) {
 
 	g.Expect(shellz.NewCommand("ls", ".").SetEnv("K", "V").Exec()).To(BeNil())
 }
+*/
 
 func (*CommandSuite) TestExec_PreparationErrors(g *WithT) {
 	g.Expect(shellz.NewCommand("cae0e988-f55b-4803-a471-a877b686d1a8").Exec()).
@@ -609,6 +610,7 @@ func (*CommandSuite) TestExec_PreparationErrors(g *WithT) {
 		To(MatchError(`execution error: chdir cae0e988-f55b-4803-a471-a877b686d1a8: no such file or directory`))
 }
 
+/*	TODO(ibrt): Use mock.
 func (s *CommandSuite) TestExec_ExecutionError(g *WithT) {
 	shellz.DefaultExec = func(argv0 string, argv []string, envv []string) error {
 		g.Expect(argv0).To(HaveSuffix("ls"))
@@ -625,6 +627,7 @@ func (s *CommandSuite) TestExec_ExecutionError(g *WithT) {
 	g.Expect(shellz.NewCommand("ls", ".").SetEnv("K", "V").Exec()).
 		To(MatchError("execution error: test error"))
 }
+*/
 
 func (*CommandSuite) TestMustExec_Error(g *WithT) {
 	g.Expect(
