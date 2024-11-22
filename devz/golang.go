@@ -16,15 +16,6 @@ import (
 	"github.com/ibrt/golang-lib/stringz"
 )
 
-// GoTool describes a Go tool.
-type GoTool struct {
-	m              *sync.Mutex
-	pkg            string
-	path           string
-	defaultVersion string
-	currentVersion string
-}
-
 // Known Go tools.
 var (
 	GoToolGoCov       = NewGoTool("github.com/axw/gocov", "gocov", "v1.2.1")
@@ -33,6 +24,33 @@ var (
 	GoToolMockGen     = NewGoTool("go.uber.org/mock", "/mockgen", "v0.5.0")
 	GoToolStaticCheck = NewGoTool("honnef.co/go/tools", "cmd/staticcheck", "2024.1.1")
 )
+
+// MustLookupGoTool returns a *GoTool
+func MustLookupGoTool(key string) *GoTool {
+	switch key {
+	case "go-cov":
+		return GoToolGoCov
+	case "go-cov-html":
+		return GoToolGoCovHTML
+	case "golint":
+		return GoToolGolint
+	case "mock-gen":
+		return GoToolMockGen
+	case "static-check":
+		return GoToolStaticCheck
+	default:
+		panic(errorz.Errorf("unknown go tool: %v", key))
+	}
+}
+
+// GoTool describes a Go tool.
+type GoTool struct {
+	m              *sync.Mutex
+	pkg            string
+	path           string
+	defaultVersion string
+	currentVersion string
+}
 
 // NewGoTool initializes a new Go tool.
 func NewGoTool(pkg, path, defaultVersion string) *GoTool {
