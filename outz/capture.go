@@ -55,6 +55,23 @@ func SetupColorStreams(outW *os.File, errW *os.File) RestoreFunc {
 	}
 }
 
+// SetupColorStreamsNoColor is a SetupFunc that configures the color streams.
+func SetupColorStreamsNoColor(outW *os.File, errW *os.File) RestoreFunc {
+	origNoColor := color.NoColor
+	origOut := color.Output
+	origErr := color.Error
+
+	color.NoColor = true
+	color.Output = outW
+	color.Error = errW
+
+	return func() {
+		color.NoColor = origNoColor
+		color.Output = origOut
+		color.Error = origErr
+	}
+}
+
 // SetupTableStreams is a SetupFunc that configures the table streams.
 func SetupTableStreams(outW *os.File, _ *os.File) RestoreFunc {
 	origOut := table.DefaultWriter
