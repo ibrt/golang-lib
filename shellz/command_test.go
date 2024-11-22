@@ -38,7 +38,7 @@ func (*CommandSuite) TestRun_Success(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2m-b\x1b[0m\n     1\tinput", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestRun_Error(g *WithT) {
@@ -76,7 +76,7 @@ func (*CommandSuite) TestMustRun_Success(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2m-b\x1b[0m\n     1\tinput", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustRun_Error(g *WithT) {
@@ -102,8 +102,8 @@ func (*CommandSuite) TestOutput_Success(g *WithT) {
 	g.Expect(string(out)).To(Equal("     1\tinput"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestOutput_Error_EchoStderrTrue(g *WithT) {
@@ -125,7 +125,7 @@ func (*CommandSuite) TestOutput_Error_EchoStderrTrue(g *WithT) {
 	g.Expect(eErr.Error()).To(Equal("execution error: exit status 1"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
 	g.Expect(errBuf).To(Equal("cat: cae0e988-f55b-4803-a471-a877b686d1a8: No such file or directory\n"))
 }
 
@@ -148,8 +148,8 @@ func (*CommandSuite) TestOutput_Error_EchoStderrFalse(g *WithT) {
 	g.Expect(eErr.Error()).To(Equal("execution error: exit status 1"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustOutput_Success(g *WithT) {
@@ -163,8 +163,8 @@ func (*CommandSuite) TestMustOutput_Success(g *WithT) {
 	}).ToNot(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustOutput_Error(g *WithT) {
@@ -176,7 +176,7 @@ func (*CommandSuite) TestMustOutput_Error(g *WithT) {
 	}).To(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
 	g.Expect(errBuf).To(Equal("cat: cae0e988-f55b-4803-a471-a877b686d1a8: No such file or directory\n"))
 }
 
@@ -190,8 +190,8 @@ func (*CommandSuite) TestOutputString_Success(g *WithT) {
 	g.Expect(out).To(Equal("     1\tinput"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestOutputString_Error(g *WithT) {
@@ -212,7 +212,7 @@ func (*CommandSuite) TestOutputString_Error(g *WithT) {
 	g.Expect(eErr.Error()).To(Equal("execution error: exit status 1"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
 	g.Expect(errBuf).To(Equal("cat: cae0e988-f55b-4803-a471-a877b686d1a8: No such file or directory\n"))
 }
 
@@ -227,8 +227,8 @@ func (*CommandSuite) TestMustOutputString_Success(g *WithT) {
 	}).ToNot(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustOutputString_Error(g *WithT) {
@@ -240,7 +240,7 @@ func (*CommandSuite) TestMustOutputString_Error(g *WithT) {
 	}).To(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
 	g.Expect(errBuf).To(Equal("cat: cae0e988-f55b-4803-a471-a877b686d1a8: No such file or directory\n"))
 }
 
@@ -254,8 +254,8 @@ func (*CommandSuite) TestCombinedOutput_Success(g *WithT) {
 	g.Expect(string(out)).To(Equal("     1\tinput"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustCombinedOutput_Success(g *WithT) {
@@ -269,8 +269,8 @@ func (*CommandSuite) TestMustCombinedOutput_Success(g *WithT) {
 	}).ToNot(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestCombinedOutput_Error(g *WithT) {
@@ -291,8 +291,8 @@ func (*CommandSuite) TestCombinedOutput_Error(g *WithT) {
 	g.Expect(eErr.Error()).To(Equal("execution error: exit status 1"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustCombinedOutput_Error(g *WithT) {
@@ -304,8 +304,8 @@ func (*CommandSuite) TestMustCombinedOutput_Error(g *WithT) {
 	}).To(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestCombinedOutputString_Success(g *WithT) {
@@ -320,8 +320,8 @@ func (*CommandSuite) TestCombinedOutputString_Success(g *WithT) {
 	g.Expect(out).To(Equal("     1\tinput"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestCombinedOutputString_Error(g *WithT) {
@@ -342,8 +342,8 @@ func (*CommandSuite) TestCombinedOutputString_Error(g *WithT) {
 	g.Expect(eErr.Error()).To(Equal("execution error: exit status 1"))
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustCombinedOutputString_Success(g *WithT) {
@@ -356,8 +356,8 @@ func (*CommandSuite) TestMustCombinedOutputString_Success(g *WithT) {
 	}).ToNot(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustCombinedOutputString_Error(g *WithT) {
@@ -369,8 +369,8 @@ func (*CommandSuite) TestMustCombinedOutputString_Error(g *WithT) {
 	}).To(Panic())
 
 	outBuf, errBuf := outz.MustStopCapturing()
-	g.Expect(outBuf).To(Equal(""))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(outBuf).To(BeEmpty())
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestLines_Success(g *WithT) {
@@ -398,7 +398,7 @@ func (*CommandSuite) TestLines_Success(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2m\x1b[0m\n", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestLines_Success_LongLine(g *WithT) {
@@ -430,7 +430,7 @@ func (*CommandSuite) TestLines_Success_LongLine(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2m\x1b[0m\n", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestLines_Error(g *WithT) {
@@ -462,7 +462,7 @@ func (*CommandSuite) TestLines_Error(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2mcae0e988-f55b-4803-a471-a877b686d1a8\x1b[0m\n", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestLines_Error_Start(g *WithT) {
@@ -492,7 +492,7 @@ func (*CommandSuite) TestLines_Error_Start(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cae0e988-f55b-4803-a471-a877b686d1a8 \x1b[2m\x1b[0m\n", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestLines_Error_LongLine(g *WithT) {
@@ -525,7 +525,7 @@ func (*CommandSuite) TestLines_Error_LongLine(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2m%v\x1b[0m\n", consolez.IconRunner, longLine)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustLines_Success(g *WithT) {
@@ -555,7 +555,7 @@ func (*CommandSuite) TestMustLines_Success(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2m\x1b[0m\n", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMustLines_Error(g *WithT) {
@@ -582,7 +582,7 @@ func (*CommandSuite) TestMustLines_Error(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2mcae0e988-f55b-4803-a471-a877b686d1a8\x1b[0m\n", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (s *CommandSuite) TestExec_Success(g *WithT) {
@@ -644,7 +644,7 @@ func (*CommandSuite) TestAddParams(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2m-b\x1b[0m\n     1\tinput", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestIfTrueAddParams(g *WithT) {
@@ -670,7 +670,7 @@ func (*CommandSuite) TestSetDir(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal("content"))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestSetEnv(g *WithT) {
@@ -683,7 +683,7 @@ func (*CommandSuite) TestSetEnv(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(ContainSubstring("k-cae0e988-f55b-4803-a471-a877b686d1a8=v-cae0e988-f55b-4803-a471-a877b686d1a8"))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestMergeEnv(g *WithT) {
@@ -696,7 +696,7 @@ func (*CommandSuite) TestMergeEnv(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(ContainSubstring("k-cae0e988-f55b-4803-a471-a877b686d1a8=v-cae0e988-f55b-4803-a471-a877b686d1a8"))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CommandSuite) TestSetIn(g *WithT) {
