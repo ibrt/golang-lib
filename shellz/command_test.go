@@ -3,6 +3,7 @@ package shellz_test
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -55,6 +56,10 @@ func (*CommandSuite) TestRun_Error(g *WithT) {
 	g.Expect(eErr.GetEnv()).To(BeEmpty())
 	g.Expect(eErr.GetExitCode()).To(Equal(1))
 	g.Expect(eErr.Error()).To(Equal("execution error: exit status 1"))
+
+	xErr, ok := errorz.As[*exec.ExitError](err)
+	g.Expect(ok).To(BeTrue())
+	g.Expect(xErr.ExitCode()).To(Equal(1))
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cat \x1b[2mcae0e988-f55b-4803-a471-a877b686d1a8\x1b[0m\n", consolez.IconRunner)))

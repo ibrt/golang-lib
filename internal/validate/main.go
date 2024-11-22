@@ -19,7 +19,7 @@ func main() {
 	devz.MustRunGoTests(&devz.GoTestsParams{
 		Packages:        []string{"./..."},
 		CoverageDirPath: filepath.Join(".build", "coverage"),
-		OpenCoverage:    false,
+		OpenCoverage:    true,
 		PrintNotices:    true,
 		PrintCommands:   true,
 	})
