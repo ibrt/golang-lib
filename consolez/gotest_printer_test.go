@@ -77,5 +77,5 @@ func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
 		"",
 	}, "\n")))
 
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }

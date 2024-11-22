@@ -32,5 +32,5 @@ func (s *ColorsSuite) TestColors(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal("\x1b[0mdefault\x1b[0m\x1b[1mhighlight\x1b[0m\x1b[1;2msecondaryHighlight\x1b[0m\x1b[2msecondary\x1b[0m\x1b[36minfo\x1b[0m\x1b[32msuccess\x1b[0m\x1b[33mwarning\x1b[0m\x1b[91merror\x1b[0m"))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }

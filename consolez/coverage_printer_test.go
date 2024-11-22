@@ -96,7 +96,7 @@ func (*CoveragePrinterSuite) TestCoveragePrinter(g *WithT) {
 		"",
 	}, "\n")))
 
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CoveragePrinterSuite) TestCoveragePrinterNoStatements(g *WithT) {
@@ -124,5 +124,5 @@ func (*CoveragePrinterSuite) TestCoveragePrinterNoStatements(g *WithT) {
 		"",
 	}, "\n")))
 
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }

@@ -54,13 +54,13 @@ func (*PointersSuite) TestPtrZeroToNilIfTrue(g *WithT) {
 }
 
 func (*PointersSuite) TestValNilToZero(g *WithT) {
-	g.Expect(memz.ValNilToZero(memz.Ptr(""))).To(Equal(""))
+	g.Expect(memz.ValNilToZero(memz.Ptr(""))).To(BeEmpty())
 	g.Expect(memz.ValNilToZero(memz.Ptr("a"))).To(Equal("a"))
 	g.Expect(memz.ValNilToZero[string](nil)).To(BeEmpty())
 }
 
 func (*PointersSuite) TestValNilToDef(g *WithT) {
-	g.Expect(memz.ValNilToDef(memz.Ptr(""), "d")).To(Equal(""))
+	g.Expect(memz.ValNilToDef(memz.Ptr(""), "d")).To(BeEmpty())
 	g.Expect(memz.ValNilToDef(memz.Ptr("a"), "d")).To(Equal("a"))
 	g.Expect(memz.ValNilToDef(nil, "d")).To(Equal("d"))
 }

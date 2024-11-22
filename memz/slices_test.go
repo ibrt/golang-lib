@@ -27,8 +27,8 @@ func (*SlicesSuite) TestSafeSliceIndexZero(g *WithT) {
 	g.Expect(memz.SafeSliceIndexZero(s, -3)).To(Equal("a"))
 	g.Expect(memz.SafeSliceIndexZero(s, -2)).To(Equal("b"))
 	g.Expect(memz.SafeSliceIndexZero(s, -1)).To(Equal("c"))
-	g.Expect(memz.SafeSliceIndexZero(s, 3)).To(Equal(""))
-	g.Expect(memz.SafeSliceIndexZero(s, 4)).To(Equal(""))
+	g.Expect(memz.SafeSliceIndexZero(s, 3)).To(BeEmpty())
+	g.Expect(memz.SafeSliceIndexZero(s, 4)).To(BeEmpty())
 }
 
 func (*SlicesSuite) TestSafeSliceIndexDef(g *WithT) {

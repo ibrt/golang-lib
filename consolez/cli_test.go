@@ -44,7 +44,7 @@ func (*CLISuite) TestTool(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("┌─────────────────┐\n│ %v \x1b[1mTool\x1b[0m command │\n└─────────────────┘\n\n\x1b[1mInput          Value       \n\x1b[22m\x1b[33m--flag=STRING  \x1b[0mflag-value  \n\x1b[33m<arg>          \x1b[0marg-value   \n", consolez.IconRocket)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestBanner(g *WithT) {
@@ -55,7 +55,7 @@ func (*CLISuite) TestBanner(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("┌──────────────────┐\n│ %v \x1b[1mTitle\x1b[0m tagline │\n└──────────────────┘\n", consolez.IconRocket)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestHeader_AddSpaceBeforeHeadersTrue(g *WithT) {
@@ -90,7 +90,7 @@ func (*CLISuite) TestHeader_AddSpaceBeforeHeadersTrue(g *WithT) {
 			fmt.Sprintf("\n%v \x1b[1mH1 2\x1b[0m\n", consolez.IconHighVoltage),
 		}, "")))
 
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestHeader_AddSpaceBeforeHeadersFalse(g *WithT) {
@@ -125,7 +125,7 @@ func (*CLISuite) TestHeader_AddSpaceBeforeHeadersFalse(g *WithT) {
 			fmt.Sprintf("%v \x1b[1mH1 2\x1b[0m\n", consolez.IconHighVoltage),
 		}, "")))
 
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestNotice(g *WithT) {
@@ -136,7 +136,7 @@ func (*CLISuite) TestNotice(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal("\x1b[2m[...................scope]\x1b[0m\x1b[0m p1\x1b[0m\x1b[2m p2\x1b[0m\x1b[2m p3\x1b[0m\n"))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestCommand_Rel(g *WithT) {
@@ -147,7 +147,7 @@ func (*CLISuite) TestCommand_Rel(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cmd \x1b[2mp1 p2\x1b[0m\n", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestCommand_Abs(g *WithT) {
@@ -158,7 +158,7 @@ func (*CLISuite) TestCommand_Abs(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cmd \x1b[2mp1 p2\x1b[0m\n", consolez.IconRunner)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestNewTable(g *WithT) {
@@ -169,7 +169,7 @@ func (*CLISuite) TestNewTable(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal("\x1b[1mA  B  \n\x1b[22m\x1b[33ma  \x1b[0mb  \n"))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestError_DebugFalse(g *WithT) {
@@ -180,7 +180,7 @@ func (*CLISuite) TestError_DebugFalse(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest error\x1b[0m\n", consolez.IconCollision)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestError_DebugTrue(g *WithT) {
@@ -191,7 +191,7 @@ func (*CLISuite) TestError_DebugTrue(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(HavePrefix(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest error\x1b[0m\n(errorz.dump)", consolez.IconCollision)))
-	g.Expect(errBuf).To(Equal(""))
+	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestRecover(g *WithT) {
@@ -205,7 +205,7 @@ func (*CLISuite) TestRecover(g *WithT) {
 	defer func() {
 		outBuf, errBuf := outz.MustStopCapturing()
 		g.Expect(outBuf).To(HavePrefix(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest panic\x1b[0m\n(errorz.dump)", consolez.IconCollision)))
-		g.Expect(errBuf).To(Equal(""))
+		g.Expect(errBuf).To(BeEmpty())
 	}()
 
 	defer c.Recover(true)
