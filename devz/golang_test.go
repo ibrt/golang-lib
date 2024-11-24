@@ -21,15 +21,15 @@ import (
 	"github.com/ibrt/golang-lib/shellz/tshellz"
 )
 
-type Suite struct {
+type GoSuite struct {
 	// intentionally empty
 }
 
-func TestSuite(t *testing.T) {
-	fixturez.RunSuite(t, &Suite{})
+func TestGoSuite(t *testing.T) {
+	fixturez.RunSuite(t, &GoSuite{})
 }
 
-func (*Suite) TestMustLookupGoTool(g *WithT) {
+func (*GoSuite) TestMustLookupGoTool(g *WithT) {
 	g.Expect(devz.MustLookupGoTool("go-cov")).To(Equal(devz.GoToolGoCov))
 	g.Expect(devz.MustLookupGoTool("go-cov-html")).To(Equal(devz.GoToolGoCovHTML))
 	g.Expect(devz.MustLookupGoTool("golint")).To(Equal(devz.GoToolGolint))
@@ -38,7 +38,7 @@ func (*Suite) TestMustLookupGoTool(g *WithT) {
 	g.Expect(func() { devz.MustLookupGoTool("unknown") }).To(PanicWith(MatchError("unknown go tool: unknown")))
 }
 
-func (*Suite) TestGoTool(g *WithT) {
+func (*GoSuite) TestGoTool(g *WithT) {
 	devz.GoToolGolint.MustRun(".")
 
 	g.Expect(devz.NewGoTool("a", "b", "c").GetPackage()).To(Equal("a"))
@@ -51,7 +51,7 @@ func (*Suite) TestGoTool(g *WithT) {
 	g.Expect(gt.GetVersion()).To(Equal("latest"))
 }
 
-func (*Suite) TestRunGoChecks(g *WithT, ctrl *gomock.Controller) {
+func (*GoSuite) TestRunGoChecks(g *WithT, ctrl *gomock.Controller) {
 	devz.GoToolGolint.GetVersion()      // warm up
 	devz.GoToolStaticCheck.GetVersion() // warm up
 
@@ -149,7 +149,7 @@ func (*Suite) TestRunGoChecks(g *WithT, ctrl *gomock.Controller) {
 	g.Expect(errBuf).To(BeEmpty())
 }
 
-func (*Suite) TestRunGoTests_SelectedPackages(g *WithT, ctrl *gomock.Controller) {
+func (*GoSuite) TestRunGoTests_SelectedPackages(g *WithT, ctrl *gomock.Controller) {
 	devz.GoToolGoCov.GetVersion()     // warm up
 	devz.GoToolGoCovHTML.GetVersion() // warm up
 
@@ -271,7 +271,7 @@ func (*Suite) TestRunGoTests_SelectedPackages(g *WithT, ctrl *gomock.Controller)
 	g.Expect(errBuf).To(BeEmpty())
 }
 
-func (*Suite) TestRunGoTests_AllPackages(g *WithT, ctrl *gomock.Controller) {
+func (*GoSuite) TestRunGoTests_AllPackages(g *WithT, ctrl *gomock.Controller) {
 	devz.GoToolGoCov.GetVersion()     // warm up
 	devz.GoToolGoCovHTML.GetVersion() // warm up
 
