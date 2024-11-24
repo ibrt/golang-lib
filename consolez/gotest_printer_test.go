@@ -21,7 +21,7 @@ func TestGoTestPrinterSuite(t *testing.T) {
 }
 
 func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	p := consolez.NewGoTestPrinter()

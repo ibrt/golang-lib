@@ -37,7 +37,7 @@ func (*CLISuite) TestTool(g *WithT) {
 	kCtx, err := k.Parse([]string{"--flag=flag-value", "command", "arg-value"})
 	g.Expect(err).To(Succeed())
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.DefaultCLI.Tool("Tool", kCtx)
@@ -48,7 +48,7 @@ func (*CLISuite) TestTool(g *WithT) {
 }
 
 func (*CLISuite) TestBanner(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.DefaultCLI.Banner("Title", "tagline")
@@ -59,7 +59,7 @@ func (*CLISuite) TestBanner(g *WithT) {
 }
 
 func (*CLISuite) TestHeader_AddSpaceBeforeHeadersTrue(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	c := consolez.NewCLI(true, os.Exit)
@@ -94,7 +94,7 @@ func (*CLISuite) TestHeader_AddSpaceBeforeHeadersTrue(g *WithT) {
 }
 
 func (*CLISuite) TestHeader_AddSpaceBeforeHeadersFalse(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	c := consolez.NewCLI(false, os.Exit)
@@ -129,7 +129,7 @@ func (*CLISuite) TestHeader_AddSpaceBeforeHeadersFalse(g *WithT) {
 }
 
 func (*CLISuite) TestNotice(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.DefaultCLI.Notice("scope", "p1", "p2", "p3")
@@ -140,7 +140,7 @@ func (*CLISuite) TestNotice(g *WithT) {
 }
 
 func (*CLISuite) TestCommand_Rel(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.DefaultCLI.Command("cmd", "p1", "p2")
@@ -151,7 +151,7 @@ func (*CLISuite) TestCommand_Rel(g *WithT) {
 }
 
 func (*CLISuite) TestCommand_Abs(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.DefaultCLI.Command(filez.MustAbs("cmd"), "p1", "p2")
@@ -162,7 +162,7 @@ func (*CLISuite) TestCommand_Abs(g *WithT) {
 }
 
 func (*CLISuite) TestNewTable(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.DefaultCLI.NewTable("A", "B").AddRow("a", "b").Print()
@@ -173,7 +173,7 @@ func (*CLISuite) TestNewTable(g *WithT) {
 }
 
 func (*CLISuite) TestError_DebugFalse(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.DefaultCLI.Error(fmt.Errorf("test error"), false)
@@ -184,7 +184,7 @@ func (*CLISuite) TestError_DebugFalse(g *WithT) {
 }
 
 func (*CLISuite) TestError_DebugTrue(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.DefaultCLI.Error(fmt.Errorf("test error"), true)
@@ -199,7 +199,7 @@ func (*CLISuite) TestRecover(g *WithT) {
 		g.Expect(code).To(Equal(1))
 	})
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	defer func() {

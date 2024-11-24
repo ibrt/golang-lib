@@ -123,7 +123,7 @@ func (*Suite) TestRunGoChecks(g *WithT, ctrl *gomock.Controller) {
 		Times(1).
 		Return(nil)
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreamsNoColor, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(true), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	devz.MustRunGoChecks(&devz.GoChecksParams{
@@ -240,7 +240,7 @@ func (*Suite) TestRunGoTests_SelectedPackages(g *WithT, ctrl *gomock.Controller)
 		Times(1).
 		Return(nil)
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreamsNoColor, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(true), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	devz.MustRunGoTests(&devz.GoTestsParams{
@@ -362,7 +362,7 @@ func (*Suite) TestRunGoTests_AllPackages(g *WithT, ctrl *gomock.Controller) {
 		Times(1).
 		Return(nil)
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreamsNoColor, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(true), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	devz.MustRunGoTests(&devz.GoTestsParams{

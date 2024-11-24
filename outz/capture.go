@@ -38,37 +38,22 @@ func SetupStandardStreams(outW *os.File, errW *os.File) RestoreFunc {
 	}
 }
 
-// SetupColorStreams is a SetupFunc that configures the color streams.
-func SetupColorStreams(outW *os.File, errW *os.File) RestoreFunc {
-	origNoColor := color.NoColor
-	origOut := color.Output
-	origErr := color.Error
+// GetSetupColorStreams returns a SetupFunc that configures the color streams.
+func GetSetupColorStreams(noColor bool) SetupFunc {
+	return func(outW *os.File, errW *os.File) RestoreFunc {
+		origNoColor := color.NoColor
+		origOut := color.Output
+		origErr := color.Error
 
-	color.NoColor = false
-	color.Output = outW
-	color.Error = errW
+		color.NoColor = noColor
+		color.Output = outW
+		color.Error = errW
 
-	return func() {
-		color.NoColor = origNoColor
-		color.Output = origOut
-		color.Error = origErr
-	}
-}
-
-// SetupColorStreamsNoColor is a SetupFunc that configures the color streams.
-func SetupColorStreamsNoColor(outW *os.File, errW *os.File) RestoreFunc {
-	origNoColor := color.NoColor
-	origOut := color.Output
-	origErr := color.Error
-
-	color.NoColor = true
-	color.Output = outW
-	color.Error = errW
-
-	return func() {
-		color.NoColor = origNoColor
-		color.Output = origOut
-		color.Error = origErr
+		return func() {
+			color.NoColor = origNoColor
+			color.Output = origOut
+			color.Error = origErr
+		}
 	}
 }
 

@@ -29,7 +29,7 @@ func TestCommandSuite(t *testing.T) {
 }
 
 func (*CommandSuite) TestRun_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).Run()).
@@ -41,7 +41,7 @@ func (*CommandSuite) TestRun_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestRun_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").Run()
@@ -66,7 +66,7 @@ func (*CommandSuite) TestRun_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestMustRun_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -79,7 +79,7 @@ func (*CommandSuite) TestMustRun_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestMustRun_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -92,7 +92,7 @@ func (*CommandSuite) TestMustRun_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestOutput_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	out, err := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).Output(true)
@@ -106,7 +106,7 @@ func (*CommandSuite) TestOutput_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestOutput_Error_EchoStderrTrue(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").Output(true)
@@ -129,7 +129,7 @@ func (*CommandSuite) TestOutput_Error_EchoStderrTrue(g *WithT) {
 }
 
 func (*CommandSuite) TestOutput_Error_EchoStderrFalse(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").Output(false)
@@ -152,7 +152,7 @@ func (*CommandSuite) TestOutput_Error_EchoStderrFalse(g *WithT) {
 }
 
 func (*CommandSuite) TestMustOutput_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -167,7 +167,7 @@ func (*CommandSuite) TestMustOutput_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestMustOutput_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -180,7 +180,7 @@ func (*CommandSuite) TestMustOutput_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestOutputString_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	out, err := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).OutputString(true)
@@ -194,7 +194,7 @@ func (*CommandSuite) TestOutputString_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestOutputString_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").OutputString(true)
@@ -216,7 +216,7 @@ func (*CommandSuite) TestOutputString_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestMustOutputString_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -231,7 +231,7 @@ func (*CommandSuite) TestMustOutputString_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestMustOutputString_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -244,7 +244,7 @@ func (*CommandSuite) TestMustOutputString_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestCombinedOutput_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	out, err := shellz.NewCommand("cat", "-b").SetIn(strings.NewReader("input")).CombinedOutput()
@@ -258,7 +258,7 @@ func (*CommandSuite) TestCombinedOutput_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestMustCombinedOutput_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -273,7 +273,7 @@ func (*CommandSuite) TestMustCombinedOutput_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestCombinedOutput_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").CombinedOutput()
@@ -295,7 +295,7 @@ func (*CommandSuite) TestCombinedOutput_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestMustCombinedOutput_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -308,7 +308,7 @@ func (*CommandSuite) TestMustCombinedOutput_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestCombinedOutputString_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	out, err := shellz.NewCommand("cat", "-b").
@@ -324,7 +324,7 @@ func (*CommandSuite) TestCombinedOutputString_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestCombinedOutputString_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	out, err := shellz.NewCommand("cat", "cae0e988-f55b-4803-a471-a877b686d1a8").CombinedOutputString()
@@ -346,7 +346,7 @@ func (*CommandSuite) TestCombinedOutputString_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestMustCombinedOutputString_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -360,7 +360,7 @@ func (*CommandSuite) TestMustCombinedOutputString_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestMustCombinedOutputString_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(func() {
@@ -373,7 +373,7 @@ func (*CommandSuite) TestMustCombinedOutputString_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestLines_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	m := &sync.Mutex{}
@@ -401,7 +401,7 @@ func (*CommandSuite) TestLines_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestLines_Success_LongLine(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	longLine := strings.Repeat("x", 8*1024)
@@ -433,7 +433,7 @@ func (*CommandSuite) TestLines_Success_LongLine(g *WithT) {
 }
 
 func (*CommandSuite) TestLines_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	m := &sync.Mutex{}
@@ -465,7 +465,7 @@ func (*CommandSuite) TestLines_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestLines_Error_Start(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	m := &sync.Mutex{}
@@ -495,7 +495,7 @@ func (*CommandSuite) TestLines_Error_Start(g *WithT) {
 }
 
 func (*CommandSuite) TestLines_Error_LongLine(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	longLine := strings.Repeat("x", 8*1024)
@@ -528,7 +528,7 @@ func (*CommandSuite) TestLines_Error_LongLine(g *WithT) {
 }
 
 func (*CommandSuite) TestMustLines_Success(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	m := &sync.Mutex{}
@@ -558,7 +558,7 @@ func (*CommandSuite) TestMustLines_Success(g *WithT) {
 }
 
 func (*CommandSuite) TestMustLines_Error(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	m := &sync.Mutex{}
@@ -638,7 +638,7 @@ func (*CommandSuite) TestMustExec_Error(g *WithT) {
 }
 
 func (*CommandSuite) TestAddParams(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	cmd := shellz.NewCommand("cat").SetIn(strings.NewReader("input")).AddParams("-b")
@@ -659,7 +659,7 @@ func (*CommandSuite) TestIfTrueAddParams(g *WithT) {
 }
 
 func (*CommandSuite) TestSetDir(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	filePath := filez.MustCreateTempFileString("content")
@@ -677,7 +677,7 @@ func (*CommandSuite) TestSetDir(g *WithT) {
 }
 
 func (*CommandSuite) TestSetEnv(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	cmd := shellz.NewCommand("env").SetEnv("k-cae0e988-f55b-4803-a471-a877b686d1a8", "v-cae0e988-f55b-4803-a471-a877b686d1a8")
@@ -690,7 +690,7 @@ func (*CommandSuite) TestSetEnv(g *WithT) {
 }
 
 func (*CommandSuite) TestMergeEnv(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	cmd := shellz.NewCommand("env").MergeEnv(map[string]string{"k-cae0e988-f55b-4803-a471-a877b686d1a8": "v-cae0e988-f55b-4803-a471-a877b686d1a8"})

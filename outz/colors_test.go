@@ -18,7 +18,7 @@ func TestColorsSuite(t *testing.T) {
 }
 
 func (s *ColorsSuite) TestColors(g *WithT) {
-	outz.MustStartCapturing(outz.SetupColorStreams)
+	outz.MustStartCapturing(outz.GetSetupColorStreams(false))
 	defer outz.MustResetCapturing()
 
 	g.Expect(outz.GetColorDefault().Print("default")).Error().To(Succeed())

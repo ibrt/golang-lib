@@ -21,7 +21,7 @@ func TestCoveragePrinterSuite(t *testing.T) {
 }
 
 func (*CoveragePrinterSuite) TestCoveragePrinter(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.NewCoveragePrinter().Print(&consolez.Coverage{
@@ -100,7 +100,7 @@ func (*CoveragePrinterSuite) TestCoveragePrinter(g *WithT) {
 }
 
 func (*CoveragePrinterSuite) TestCoveragePrinterNoStatements(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	consolez.NewCoveragePrinter().Print(&consolez.Coverage{

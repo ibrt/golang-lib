@@ -20,7 +20,7 @@ func TestCaptureSuite(t *testing.T) {
 }
 
 func (*CaptureSuite) TestCapturing(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.SetupColorStreams, outz.SetupTableStreams)
+	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
 	g.Expect(fmt.Fprint(os.Stdout, "<out>")).Error().To(Succeed())
