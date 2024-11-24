@@ -127,10 +127,8 @@ func (*Suite) TestRunGoChecks(g *WithT, ctrl *gomock.Controller) {
 	defer outz.MustResetCapturing()
 
 	devz.MustRunGoChecks(&devz.GoChecksParams{
-		AllPackages:   []string{"./..."},
-		BuildTags:     []string{"t1", "t2"},
-		PrintNotices:  true,
-		PrintCommands: true,
+		AllPackages: []string{"./..."},
+		BuildTags:   []string{"t1", "t2"},
 	})
 
 	outBuf, errBuf := outz.MustStopCapturing()
@@ -254,8 +252,6 @@ func (*Suite) TestRunGoTests_SelectedPackages(g *WithT, ctrl *gomock.Controller)
 		Verbose:          nil,
 		CoverageDirPath:  dirPath,
 		OpenCoverage:     true,
-		PrintNotices:     true,
-		PrintCommands:    true,
 	})
 
 	outBuf, errBuf := outz.MustStopCapturing()
@@ -378,8 +374,6 @@ func (*Suite) TestRunGoTests_AllPackages(g *WithT, ctrl *gomock.Controller) {
 		Verbose:          nil,
 		CoverageDirPath:  dirPath,
 		OpenCoverage:     true,
-		PrintNotices:     true,
-		PrintCommands:    true,
 	})
 
 	outBuf, errBuf := outz.MustStopCapturing()

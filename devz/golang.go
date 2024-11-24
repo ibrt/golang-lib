@@ -122,68 +122,45 @@ func (t *GoTool) getVersion() string {
 
 // GoChecksParams describes the parameters for running Go checks.
 type GoChecksParams struct {
-	AllPackages   []string
-	BuildTags     []string
-	PrintNotices  bool
-	PrintCommands bool
+	AllPackages []string
+	BuildTags   []string
 }
 
 // MustRunGoChecks runs a set of Go checks in the current working directory.
 func MustRunGoChecks(params *GoChecksParams) {
 	errorz.Assertf(len(params.AllPackages) > 0, "missing all packages")
 
-	if params.PrintNotices {
-		consolez.DefaultCLI.Notice("go-checks", "preparing...")
-	}
+	consolez.DefaultCLI.Notice("go-checks", "preparing...")
 
-	shellz.NewCommand("go", "mod", "tidy").
-		SetEcho(params.PrintCommands).
-		MustRun()
+	shellz.NewCommand("go", "mod", "tidy").MustRun()
+	shellz.NewCommand("go", "generate").AddParams(params.AllPackages...).MustRun()
+	shellz.NewCommand("go", "fmt").AddParams(params.AllPackages...).MustRun()
 
-	shellz.NewCommand("go", "generate").
-		AddParams(params.AllPackages...).
-		SetEcho(params.PrintCommands).
-		MustRun()
-
-	shellz.NewCommand("go", "fmt").
-		AddParams(params.AllPackages...).
-		SetEcho(params.PrintCommands).
-		MustRun()
-
-	if params.PrintNotices {
-		consolez.DefaultCLI.Notice("go-checks", "building...")
-	}
+	consolez.DefaultCLI.Notice("go-checks", "building...")
 
 	shellz.NewCommand("go", "build", "-v").
 		AddParamsIfTrue(len(params.BuildTags) > 0, fmt.Sprintf("-tags=%v", strings.Join(params.BuildTags, ","))).
 		AddParams(params.AllPackages...).
-		SetEcho(params.PrintCommands).
 		MustRun()
 
-	if params.PrintNotices {
-		consolez.DefaultCLI.Notice("go-checks", "linting...")
-	}
+	consolez.DefaultCLI.Notice("go-checks", "linting...")
 
 	GoToolGolint.
 		GetCommand().
 		AddParams("-set_exit_status").
 		AddParams(params.AllPackages...).
-		SetEcho(params.PrintCommands).
 		MustRun()
 
 	shellz.NewCommand("go", "vet").
 		AddParams(params.AllPackages...).
-		SetEcho(params.PrintCommands).
 		MustRun()
 
 	GoToolStaticCheck.
 		GetCommand().
 		AddParams(params.AllPackages...).
-		SetEcho(params.PrintCommands).
 		MustRun()
 
 	shellz.NewCommand("go", "mod", "tidy").
-		SetEcho(params.PrintCommands).
 		MustRun()
 }
 
@@ -197,8 +174,6 @@ type GoTestsParams struct {
 	Verbose          *bool
 	CoverageDirPath  string
 	OpenCoverage     bool
-	PrintNotices     bool
-	PrintCommands    bool
 }
 
 // MustRunGoTests runs a set of Go tests in the current working directory.
@@ -206,19 +181,14 @@ func MustRunGoTests(params *GoTestsParams) {
 	errorz.Assertf(len(params.AllPackages) > 0, "missing all packages")
 	errorz.Assertf(params.CoverageDirPath != "", "missing coverage dir path")
 
-	if params.PrintNotices {
-		consolez.DefaultCLI.Notice("go-tests", "preparing coverage directory...")
-	}
+	consolez.DefaultCLI.Notice("go-tests", "preparing coverage directory...")
 
 	filez.MustPrepareDir(params.CoverageDirPath, 0777)
 
-	if params.PrintNotices {
-		consolez.DefaultCLI.Notice("go-tests", "generating Go code...")
-	}
+	consolez.DefaultCLI.Notice("go-tests", "generating Go code...")
 
 	shellz.NewCommand("go", "generate").
 		AddParams(params.AllPackages...).
-		SetEcho(params.PrintCommands).
 		MustRun()
 
 	cmd := shellz.NewCommand("go", "test").
@@ -238,9 +208,7 @@ func MustRunGoTests(params *GoTestsParams) {
 		cmd = cmd.AddParams("-v")
 	}
 
-	if params.PrintNotices {
-		consolez.DefaultCLI.Notice("go-tests", "running tests...")
-	}
+	consolez.DefaultCLI.Notice("go-tests", "running tests...")
 
 	if len(params.SelectedPackages) > 0 {
 		cmd = cmd.AddParams(params.SelectedPackages...)
@@ -261,9 +229,7 @@ func MustRunGoTests(params *GoTestsParams) {
 }
 
 func processGoCoverage(params *GoTestsParams) []byte {
-	if params.PrintNotices {
-		consolez.DefaultCLI.Notice("go-tests", "processing coverage...")
-	}
+	consolez.DefaultCLI.Notice("go-tests", "processing coverage...")
 
 	coverageOutLines := memz.FilterSlice(
 		strings.Split(filez.MustReadFileString(filepath.Join(params.CoverageDirPath, "coverage.out")), "\n"),
@@ -290,9 +256,7 @@ func processGoCoverage(params *GoTestsParams) []byte {
 }
 
 func openGoCoverage(params *GoTestsParams, coverageJSON []byte) {
-	if params.PrintNotices {
-		consolez.DefaultCLI.Notice("go-tests", "opening coverage...")
-	}
+	consolez.DefaultCLI.Notice("go-tests", "opening coverage...")
 
 	coverageHTML := GoToolGoCovHTML.
 		GetCommand().

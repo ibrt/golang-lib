@@ -45,8 +45,6 @@ func (c *TestCmd) Run() error {
 		IgnoreCache:      c.IgnoreCache,
 		CoverageDirPath:  filepath.Join(".build", "coverage"),
 		OpenCoverage:     c.OpenCoverage,
-		PrintNotices:     true,
-		PrintCommands:    true,
 	})
 
 	return nil
@@ -60,17 +58,13 @@ type ValidateCmd struct {
 // Run the command.
 func (c *ValidateCmd) Run() error {
 	devz.MustRunGoChecks(&devz.GoChecksParams{
-		AllPackages:   []string{"./..."},
-		PrintNotices:  true,
-		PrintCommands: true,
+		AllPackages: []string{"./..."},
 	})
 
 	devz.MustRunGoTests(&devz.GoTestsParams{
 		AllPackages:     []string{"./..."},
 		IgnoreCache:     true,
 		CoverageDirPath: filepath.Join(".build", "coverage"),
-		PrintNotices:    true,
-		PrintCommands:   true,
 	})
 
 	return nil
