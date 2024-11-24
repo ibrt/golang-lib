@@ -24,25 +24,32 @@ func NewDockerCompose(cfg *ct.Config) *DockerCompose {
 	}
 }
 
-// Up brings up the services.
-func (d *DockerCompose) Up() {
-	d.GetCommand().
-		AddParams("up", "--detach", "--build", "--pull=always", "--force-recreate", "--remove-orphans", "--wait").
-		MustRun()
+// GetConfig returns the Docker Compose config.
+func (d *DockerCompose) GetConfig() *ct.Config {
+	return d.cfg
 }
 
-// Down takes down the services.
-func (d *DockerCompose) Down() {
-	d.GetCommand().
-		AddParams("down", "--volumes", "--rmi=local", "--remove-orphans", "--timeout", "5").
-		MustRun()
+// GetMarshaledConfig returns the Docker Compose config marshaled to YAML.
+func (d *DockerCompose) GetMarshaledConfig() []byte {
+	buf, err := yaml.Marshal(d.cfg)
+	errorz.MaybeMustWrap(err)
+	return buf
+}
+
+// GetDownCommand returns a pre-configured "docker compose down" command.
+func (d *DockerCompose) GetDownCommand() *shellz.Command {
+	return d.GetCommand().
+		AddParams("down", "--volumes", "--rmi=local", "--remove-orphans", "--timeout", "5")
+}
+
+// GetUpCommand returns a pre-configured "docker compose up" command.
+func (d *DockerCompose) GetUpCommand() *shellz.Command {
+	return d.GetCommand().
+		AddParams("up", "--detach", "--build", "--pull=always", "--force-recreate", "--remove-orphans", "--wait")
 }
 
 // GetCommand returns a pre-configured "docker compose" command.
 func (d *DockerCompose) GetCommand() *shellz.Command {
-	buf, err := yaml.Marshal(d.cfg)
-	errorz.MaybeMustWrap(err)
-
 	cmd := shellz.NewCommand("docker", "compose")
 
 	if color.NoColor || os.Getenv("CI") != "" {
@@ -52,5 +59,5 @@ func (d *DockerCompose) GetCommand() *shellz.Command {
 	return cmd.
 		AddParams("-p", d.cfg.Name).
 		AddParams("-f", "-").
-		SetIn(bytes.NewReader(buf))
+		SetIn(bytes.NewReader(d.GetMarshaledConfig()))
 }
