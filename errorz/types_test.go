@@ -217,5 +217,6 @@ func TestWrappedError(t *testing.T) {
 	g.Expect((*wrappedError)(nil).Is(fmt.Errorf(""))).To(BeFalse())
 	g.Expect((*wrappedError)(nil).Is((*wrappedError)(nil))).To(BeTrue())
 	g.Expect((*wrappedError)(nil).Is(fmt.Errorf(""))).To(BeFalse())
+	g.Expect((*wrappedError)(nil).As(fmt.Errorf(""))).To(BeFalse())
 	g.Expect((*wrappedError)(nil).Unwrap()).To(BeNil())
 }
