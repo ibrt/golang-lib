@@ -584,23 +584,32 @@ func (*CommandSuite) TestMustLines_Error(g *WithT) {
 	g.Expect(errBuf).To(BeEmpty())
 }
 
-/*	TODO(ibrt): Use mock.
-func (s *CommandSuite) TestExec_Success(g *WithT) {
-	shellz.DefaultExec = func(argv0 string, argv []string, envv []string) error {
-		g.Expect(argv0).To(HaveSuffix("ls"))
-		g.Expect(argv).To(Equal([]string{"ls", "."}))
-		g.Expect(envv).To(ContainElement("K=V"))
+// TestExecExecutor is a mock shellz.Executor used by TestExec.
+type TestExecExecutor struct {
+	*shellz.RealExecutor
+	g    *WithT
+	fail bool
+}
 
-		return nil
+// SyscallExec implements the shellz.Executor interface.
+func (m *TestExecExecutor) SyscallExec(c *shellz.Command, argv0 string, argv []string, envv []string) error {
+	m.g.Expect(argv0).To(HaveSuffix("ls"))
+	m.g.Expect(argv).To(Equal([]string{"ls", "."}))
+	m.g.Expect(envv).To(ContainElement("K=V"))
+
+	if m.fail {
+		return errorz.Errorf("test error")
 	}
 
-	defer func() {
-		shellz.DefaultExec = syscall.Exec
-	}()
+	return nil
+}
+
+func (s *CommandSuite) TestExec_Success(g *WithT) {
+	shellz.DefaultExecutor = &TestExecExecutor{RealExecutor: &shellz.RealExecutor{}, g: g, fail: false}
+	defer shellz.RestoreDefaultExecutor()
 
 	g.Expect(shellz.NewCommand("ls", ".").SetEnv("K", "V").Exec()).To(BeNil())
 }
-*/
 
 func (*CommandSuite) TestExec_PreparationErrors(g *WithT) {
 	g.Expect(shellz.NewCommand("cae0e988-f55b-4803-a471-a877b686d1a8").Exec()).
@@ -610,24 +619,18 @@ func (*CommandSuite) TestExec_PreparationErrors(g *WithT) {
 		To(MatchError(`execution error: chdir cae0e988-f55b-4803-a471-a877b686d1a8: no such file or directory`))
 }
 
-/*	TODO(ibrt): Use mock.
 func (s *CommandSuite) TestExec_ExecutionError(g *WithT) {
-	shellz.DefaultExec = func(argv0 string, argv []string, envv []string) error {
-		g.Expect(argv0).To(HaveSuffix("ls"))
-		g.Expect(argv).To(Equal([]string{"ls", "."}))
-		g.Expect(envv).To(ContainElement("K=V"))
-
-		return errorz.Errorf("test error")
-	}
-
-	defer func() {
-		shellz.DefaultExec = syscall.Exec
-	}()
-
-	g.Expect(shellz.NewCommand("ls", ".").SetEnv("K", "V").Exec()).
+	g.Expect(
+		shellz.NewCommand("ls", ".").
+			SetExecutor(&TestExecExecutor{
+				RealExecutor: &shellz.RealExecutor{},
+				g:            g,
+				fail:         true,
+			}).
+			SetEnv("K", "V").
+			Exec()).
 		To(MatchError("execution error: test error"))
 }
-*/
 
 func (*CommandSuite) TestMustExec_Error(g *WithT) {
 	g.Expect(
