@@ -1,6 +1,7 @@
 package vldz_test
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"testing"
@@ -20,7 +21,15 @@ func TestSuite(t *testing.T) {
 	fixturez.RunSuite(t, &Suite{})
 }
 
-func (s *Suite) TestKindStructOrStructPtr(g *WithT) {
+func (*Suite) TestValidationError(g *WithT) {
+	g.Expect((&vldz.ValidationError{}).Error()).To(Equal("validation error: unknown"))
+	g.Expect((*vldz.ValidationError)(nil).Unwrap()).To(BeNil())
+
+	err := fmt.Errorf("test error")
+	g.Expect(vldz.NewValidationError(err).Unwrap()).To(Equal(err))
+}
+
+func (*Suite) TestKindStructOrStructPtr(g *WithT) {
 	type validatableStruct struct {
 		Value any `json:"value" validate:"kind-struct-or-struct-ptr"`
 	}
