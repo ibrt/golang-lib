@@ -4,12 +4,15 @@ go 1.23
 
 require (
 	github.com/alecthomas/kong v1.4.0
+	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.56.0
+	github.com/awslabs/goformation/v7 v7.14.9
 	github.com/axw/gocov v1.2.1
 	github.com/compose-spec/compose-go v1.20.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.18.0
 	github.com/go-playground/validator/v10 v10.23.0
 	github.com/google/uuid v1.6.0
+	github.com/iancoleman/strcase v0.3.0
 	github.com/onsi/gomega v1.35.1
 	github.com/rodaine/table v1.3.0
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
@@ -18,6 +21,7 @@ require (
 )
 
 require (
+	github.com/aws/smithy-go v1.22.1 // indirect
 	github.com/distribution/reference v0.5.0 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
