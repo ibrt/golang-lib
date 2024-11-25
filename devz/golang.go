@@ -234,7 +234,9 @@ func processGoCoverage(params *GoTestsParams) []byte {
 	coverageOutLines := memz.FilterSlice(
 		strings.Split(filez.MustReadFileString(filepath.Join(params.CoverageDirPath, "coverage.out")), "\n"),
 		func(l string) bool {
-			return !strings.Contains(l, ".gen.go:") && !strings.Contains(l, "_generated.go:")
+			return !strings.Contains(l, ".gen.go:") &&
+				!strings.Contains(l, "_generated.go:") &&
+				!strings.Contains(l, ".nocov.go:")
 		})
 
 	filez.MustWriteFileString(
