@@ -9,6 +9,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.18.0
 	github.com/go-playground/validator/v10 v10.23.0
+	github.com/google/uuid v1.6.0
 	github.com/onsi/gomega v1.35.1
 	github.com/rodaine/table v1.3.0
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
