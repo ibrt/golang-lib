@@ -48,7 +48,7 @@ type Operations struct {
 	isDockerAuthenticated bool
 }
 
-// MustNewOperations initializes a new Operations.
+// MustNewOperations initializes a new operations.
 func MustNewOperations(appPrefix, stagePrefix, awsRegion string) *Operations {
 	namespace := strings.TrimSuffix(fmt.Sprintf("%v-%v", appPrefix, stagePrefix), "-")
 
@@ -97,9 +97,9 @@ func (o *Operations) GetTemplateUtils() *cfz.TemplateUtils {
 	return o.tplUtils
 }
 
-// MustUploadS3 uploads a file to S3.
-func (o *Operations) MustUploadS3(bucketName, key, inFilePath string) {
-	consolez.DefaultCLI.Notice("aws-operations", "uploading to S3...", bucketName, key, inFilePath)
+// MustUploadFileToS3 uploads a file to S3.
+func (o *Operations) MustUploadFileToS3(bucketName, key, inFilePath string) {
+	consolez.DefaultCLI.Notice("aws-operations", "uploading file to S3...", bucketName, key, inFilePath)
 
 	fullContentType, err := mimetype.DetectFile(inFilePath)
 	errorz.MaybeMustWrap(err)
@@ -124,9 +124,9 @@ func (o *Operations) MustUploadS3(bucketName, key, inFilePath string) {
 	errorz.MaybeMustWrap(err)
 }
 
-// MustDownloadS3 downloads a file from S3.
-func (o *Operations) MustDownloadS3(bucketName, key, outFilePath string) {
-	consolez.DefaultCLI.Notice("aws-operations", "downloading from S3...", bucketName, key, outFilePath)
+// MustDownloadFileFromS3 downloads a file from S3.
+func (o *Operations) MustDownloadFileFromS3(bucketName, key, outFilePath string) {
+	consolez.DefaultCLI.Notice("aws-operations", "downloading file from S3...", bucketName, key, outFilePath)
 
 	obj, err := o.awsS3.GetObject(context.Background(), &awss3.GetObjectInput{
 		Bucket: memz.Ptr(bucketName),
@@ -153,8 +153,8 @@ func (o *Operations) MustDownloadS3(bucketName, key, outFilePath string) {
 	errorz.MaybeMustWrap(err)
 }
 
-// MustDecryptKMS decrypts some data using a KMS key.
-func (o *Operations) MustDecryptKMS(keyID string, ciphertext []byte) []byte {
+// MustDecryptWithKMS decrypts with KMS.
+func (o *Operations) MustDecryptWithKMS(keyID string, ciphertext []byte) []byte {
 	consolez.DefaultCLI.Notice("aws-operations", "decrypting with KMS...", keyID)
 
 	resp, err := o.awsKMS.Decrypt(context.Background(), &awskms.DecryptInput{
@@ -165,8 +165,8 @@ func (o *Operations) MustDecryptKMS(keyID string, ciphertext []byte) []byte {
 	return resp.Plaintext
 }
 
-// MustEncryptKMS encrypts some data using a KMS key.
-func (o *Operations) MustEncryptKMS(keyID string, plaintext []byte) []byte {
+// MustEncryptWithKMS encrypts with KMS.
+func (o *Operations) MustEncryptWithKMS(keyID string, plaintext []byte) []byte {
 	consolez.DefaultCLI.Notice("aws-operations", "encrypting with KMS...", keyID)
 
 	resp, err := o.awsKMS.Encrypt(context.Background(), &awskms.EncryptInput{
@@ -177,8 +177,8 @@ func (o *Operations) MustEncryptKMS(keyID string, plaintext []byte) []byte {
 	return resp.CiphertextBlob
 }
 
-// MustAuthorizeSecurityGroupIngress authorizes ingress on the given security group and port from the current public IP.
-func (o *Operations) MustAuthorizeSecurityGroupIngress(securityGroupID string, port uint32) {
+// MustAuthorizeEC2SecurityGroupIngress authorizes ingress on the given EC2 security group and port from the current public IP.
+func (o *Operations) MustAuthorizeEC2SecurityGroupIngress(securityGroupID string, port uint32) {
 	consolez.DefaultCLI.Notice("aws-operations", "authorizing EC2 security group ingress...", fmt.Sprintf("%v", port))
 
 	ip, err := ipify.GetIp()
@@ -199,8 +199,8 @@ func (o *Operations) MustAuthorizeSecurityGroupIngress(securityGroupID string, p
 	}
 }
 
-// MustCreateStack creates a CloudFormation stack.
-func (o *Operations) MustCreateStack(name string, templateBody string, tagsMap map[string]string) *cft.Stack {
+// MustCreateCFStack creates a CloudFormation stack.
+func (o *Operations) MustCreateCFStack(name string, templateBody string, tagsMap map[string]string) *cft.Stack {
 	consolez.DefaultCLI.Notice("aws-operations", "creating CloudFormation stack...", name)
 
 	_, err := o.awsCF.CreateStack(context.Background(), &cf.CreateStackInput{
@@ -235,11 +235,11 @@ func (o *Operations) MustCreateStack(name string, templateBody string, tagsMap m
 				},
 				30*time.Minute))
 
-	return o.MustDescribeStack(name)
+	return o.MustDescribeCFStack(name)
 }
 
-// MustDescribeStack describes a CloudFormation stack.
-func (o *Operations) MustDescribeStack(name string) *cft.Stack {
+// MustDescribeCFStack describes a CloudFormation stack.
+func (o *Operations) MustDescribeCFStack(name string) *cft.Stack {
 	out, err := o.awsCF.DescribeStacks(context.Background(), &cf.DescribeStacksInput{
 		StackName: memz.Ptr(name),
 	})
@@ -255,8 +255,8 @@ func (o *Operations) MustDescribeStack(name string) *cft.Stack {
 	return &out.Stacks[0]
 }
 
-// MustUpdateStack updates a CloudFormation stack.
-func (o *Operations) MustUpdateStack(name string, templateBody string, tagsMap map[string]string) *cft.Stack {
+// MustUpdateCFStack updates a CloudFormation stack.
+func (o *Operations) MustUpdateCFStack(name string, templateBody string, tagsMap map[string]string) *cft.Stack {
 	consolez.DefaultCLI.Notice("aws-operations", "updating CloudFormation stack...", name)
 
 	_, err := o.awsCF.UpdateStack(context.Background(), &cf.UpdateStackInput{
@@ -279,7 +279,7 @@ func (o *Operations) MustUpdateStack(name string, templateBody string, tagsMap m
 	})
 	if err != nil {
 		if strings.Contains(err.Error(), "No updates are to be performed") {
-			return o.MustDescribeStack(name)
+			return o.MustDescribeCFStack(name)
 		}
 		errorz.MaybeMustWrap(err)
 	}
@@ -291,19 +291,19 @@ func (o *Operations) MustUpdateStack(name string, templateBody string, tagsMap m
 				&cf.DescribeStacksInput{StackName: memz.Ptr(name)},
 				30*time.Minute))
 
-	return o.MustDescribeStack(name)
+	return o.MustDescribeCFStack(name)
 }
 
-// MustUpsertStack creates or updates a CloudFormation stack.
-func (o *Operations) MustUpsertStack(name string, templateBody string, tagsMap map[string]string) *cft.Stack {
-	if o.MustDescribeStack(name) == nil {
-		return o.MustCreateStack(name, templateBody, tagsMap)
+// MustUpsertCFStack creates or updates a CloudFormation stack.
+func (o *Operations) MustUpsertCFStack(name string, templateBody string, tagsMap map[string]string) *cft.Stack {
+	if o.MustDescribeCFStack(name) == nil {
+		return o.MustCreateCFStack(name, templateBody, tagsMap)
 	}
-	return o.MustUpdateStack(name, templateBody, tagsMap)
+	return o.MustUpdateCFStack(name, templateBody, tagsMap)
 }
 
-// MustAuthenticateDockerECR runs "docker login" with credentials that allow access to ECR image repositories.
-func (o *Operations) MustAuthenticateDockerECR() {
+// MustAuthenticateDockerAgainstECR runs "docker login" with credentials that allow access to ECR image repositories.
+func (o *Operations) MustAuthenticateDockerAgainstECR() {
 	consolez.DefaultCLI.Notice("aws-operations", "authenticating Docker against ECR...")
 
 	out, err := o.awsECR.GetAuthorizationToken(context.Background(), &awsecr.GetAuthorizationTokenInput{})
