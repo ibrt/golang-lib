@@ -26,26 +26,54 @@ const (
 )
 
 var (
+	_ CLIOption = CLIOptionFunc(nil)
+)
+
+// CLIOption describes a CLI option.
+type CLIOption interface {
+	Apply(*CLI)
+}
+
+// CLIOptionFunc describes a CLI option.
+type CLIOptionFunc func(*CLI)
+
+// Apply implements the CLIOption interface.
+func (f CLIOptionFunc) Apply(c *CLI) {
+	f(c)
+}
+
+// CLIExit returns a CLI option that allows to provide an alternative implementation for "os.Exit".
+func CLIExit(exit func(code int)) CLIOptionFunc {
+	return func(c *CLI) {
+		c.exit = exit
+	}
+}
+
+var (
 	// DefaultCLI is a default, shared instance of CLI.
-	DefaultCLI = NewCLI(true, os.Exit)
+	DefaultCLI = NewCLI()
 )
 
 // CLI provides some utilities for printing messages in CLI tools.
 type CLI struct {
-	m          *sync.Mutex
-	hL         int
-	addSpacing bool
-	exit       func(code int)
+	m    *sync.Mutex
+	hL   int
+	exit func(code int)
 }
 
 // NewCLI initializes a new CLI.
-func NewCLI(addSpacing bool, exit func(int)) *CLI {
-	return &CLI{
-		m:          &sync.Mutex{},
-		hL:         0,
-		addSpacing: addSpacing,
-		exit:       exit,
+func NewCLI(options ...CLIOption) *CLI {
+	c := &CLI{
+		m:    &sync.Mutex{},
+		hL:   0,
+		exit: os.Exit,
 	}
+
+	for _, option := range options {
+		option.Apply(c)
+	}
+
+	return c
 }
 
 // Tool introduces a command line tool.
@@ -97,7 +125,7 @@ func (c *CLI) Header(format string, a ...any) func() {
 	c.m.Lock()
 	defer c.m.Unlock()
 
-	if c.hL < 2 && c.addSpacing {
+	if c.hL < 2 {
 		fmt.Println()
 	}
 
@@ -130,6 +158,12 @@ func (c *CLI) Header(format string, a ...any) func() {
 			c.hL--
 		}
 	}
+}
+
+// WithHeader calls Header and runs f() within its scope.
+func (c *CLI) WithHeader(format string, a []any, f func()) {
+	defer c.Header(format, a...)()
+	f()
 }
 
 // Notice prints a notice.
@@ -175,10 +209,7 @@ func (c *CLI) Error(err error, debug bool) {
 	c.m.Lock()
 	defer c.m.Unlock()
 
-	if c.addSpacing {
-		fmt.Println()
-	}
-
+	fmt.Println()
 	fmt.Print(IconCollision)
 	fmt.Print(" ")
 	_, _ = outz.GetColorHighlight().Println("Error")

@@ -2,7 +2,6 @@ package consolez_test
 
 import (
 	"fmt"
-	"os"
 	"strings"
 	"testing"
 
@@ -58,16 +57,14 @@ func (*CLISuite) TestBanner(g *WithT) {
 	g.Expect(errBuf).To(BeEmpty())
 }
 
-func (*CLISuite) TestHeader_AddSpaceBeforeHeadersTrue(g *WithT) {
+func (*CLISuite) TestHeader(g *WithT) {
 	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
-	c := consolez.NewCLI(true, os.Exit)
-
-	f1 := c.Header("H1 %v", 1)
-	f2 := c.Header("H2 %v", 1)
-	f3 := c.Header("H3 %v", 1)
-	f4 := c.Header("H3 %v", 1)
+	f1 := consolez.DefaultCLI.Header("H1 %v", 1)
+	f2 := consolez.DefaultCLI.Header("H2 %v", 1)
+	f3 := consolez.DefaultCLI.Header("H3 %v", 1)
+	f4 := consolez.DefaultCLI.Header("H3 %v", 1)
 
 	f4()
 	f3()
@@ -75,7 +72,7 @@ func (*CLISuite) TestHeader_AddSpaceBeforeHeadersTrue(g *WithT) {
 	f2()
 	f1()
 
-	f1 = c.Header("H1 %v", 2)
+	f1 = consolez.DefaultCLI.Header("H1 %v", 2)
 
 	f1()
 
@@ -93,36 +90,44 @@ func (*CLISuite) TestHeader_AddSpaceBeforeHeadersTrue(g *WithT) {
 	g.Expect(errBuf).To(BeEmpty())
 }
 
-func (*CLISuite) TestHeader_AddSpaceBeforeHeadersFalse(g *WithT) {
+func (*CLISuite) TestWithHeader(g *WithT) {
 	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()
 
-	c := consolez.NewCLI(false, os.Exit)
+	consolez.DefaultCLI.WithHeader(
+		"H1 %v", []any{1},
+		func() {
+			consolez.DefaultCLI.WithHeader(
+				"H2 %v", []any{1},
+				func() {
+					consolez.DefaultCLI.WithHeader(
+						"H3 %v", []any{1},
+						func() {
+							consolez.DefaultCLI.WithHeader(
+								"H3 %v", []any{1},
+								func() {
+									// intentionally empty
+								})
+						})
+				})
 
-	f1 := c.Header("H1 %v", 1)
-	f2 := c.Header("H2 %v", 1)
-	f3 := c.Header("H3 %v", 1)
-	f4 := c.Header("H3 %v", 1)
+		})
 
-	f4()
-	f3()
-	f3()
-	f2()
-	f1()
-
-	f1 = c.Header("H1 %v", 2)
-
-	f1()
+	consolez.DefaultCLI.WithHeader(
+		"H1 %v", []any{2},
+		func() {
+			// intentionally empty
+		})
 
 	outBuf, errBuf := outz.MustStopCapturing()
 
 	g.Expect(outBuf).To(Equal(strings.Join(
 		[]string{
-			fmt.Sprintf("%v \x1b[1mH1 1\x1b[0m\n", consolez.IconHighVoltage),
-			fmt.Sprintf("%v H2 1\n", consolez.IconBackhandIndexPointingRight),
+			fmt.Sprintf("\n%v \x1b[1mH1 1\x1b[0m\n", consolez.IconHighVoltage),
+			fmt.Sprintf("\n%v H2 1\n", consolez.IconBackhandIndexPointingRight),
 			"\x1b[1;2m—— \x1b[0m\x1b[1;2mH3 1\x1b[0m\n",
 			"\x1b[1;2m—— \x1b[0m\x1b[1;2mH3 1\x1b[0m\n",
-			fmt.Sprintf("%v \x1b[1mH1 2\x1b[0m\n", consolez.IconHighVoltage),
+			fmt.Sprintf("\n%v \x1b[1mH1 2\x1b[0m\n", consolez.IconHighVoltage),
 		}, "")))
 
 	g.Expect(errBuf).To(BeEmpty())
@@ -195,9 +200,10 @@ func (*CLISuite) TestError_DebugTrue(g *WithT) {
 }
 
 func (*CLISuite) TestRecover(g *WithT) {
-	c := consolez.NewCLI(true, func(code int) {
-		g.Expect(code).To(Equal(1))
-	})
+	c := consolez.NewCLI(
+		consolez.CLIExit(func(code int) {
+			g.Expect(code).To(Equal(1))
+		}))
 
 	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
 	defer outz.MustResetCapturing()

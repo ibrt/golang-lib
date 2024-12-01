@@ -39,6 +39,8 @@ type TestCmd struct {
 
 // Run the command.
 func (c *TestCmd) Run() error {
+	defer consolez.DefaultCLI.Header("Running tests...")()
+
 	devz.MustRunGoTests(&devz.GoTestsParams{
 		AllPackages:      []string{"./..."},
 		SelectedPackages: c.Packages,
@@ -57,15 +59,27 @@ type ValidateCmd struct {
 
 // Run the command.
 func (c *ValidateCmd) Run() error {
-	devz.MustRunGoChecks(&devz.GoChecksParams{
-		AllPackages: []string{"./..."},
-	})
+	consolez.DefaultCLI.WithHeader(
+		"Building, linting, and testing everything...", nil,
+		func() {
+			consolez.DefaultCLI.WithHeader(
+				"Building and linting...", nil,
+				func() {
+					devz.MustRunGoChecks(&devz.GoChecksParams{
+						AllPackages: []string{"./..."},
+					})
+				})
 
-	devz.MustRunGoTests(&devz.GoTestsParams{
-		AllPackages:     []string{"./..."},
-		IgnoreCache:     true,
-		CoverageDirPath: filepath.Join(".build", "coverage"),
-	})
+			consolez.DefaultCLI.WithHeader(
+				"Running tests...", nil,
+				func() {
+					devz.MustRunGoTests(&devz.GoTestsParams{
+						AllPackages:     []string{"./..."},
+						IgnoreCache:     true,
+						CoverageDirPath: filepath.Join(".build", "coverage"),
+					})
+				})
+		})
 
 	return nil
 }
