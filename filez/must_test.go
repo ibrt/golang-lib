@@ -31,6 +31,29 @@ func (*MustSuite) TestMustRel(g *WithT) {
 	}).ToNot(Panic())
 }
 
+func (*MustSuite) TestMaybeMustRelIfChild(g *WithT) {
+	g.Expect(func() {
+		g.Expect(
+			filez.MaybeMustRelIfChild(
+				filepath.Join("a", "b", "c"),
+				filepath.Join("a", "b"))).
+			To(Equal(filepath.Join("a", "b", "c")))
+
+		g.Expect(
+			filez.MaybeMustRelIfChild(
+				filez.MustAbs(filepath.Join("a", "b", "c")),
+				filez.MustAbs(filepath.Join("a", "b")))).
+			To(Equal(filepath.Join("c")))
+
+		g.Expect(
+			filez.MaybeMustRelIfChild(
+				filez.MustAbs(filepath.Join("a", "b", "c")),
+				filez.MustAbs(filepath.Join("b", "c")))).
+			To(Equal(filez.MustAbs(filepath.Join("a", "b", "c"))))
+
+	}).ToNot(Panic())
+}
+
 func (s *MustSuite) TestGetwdAndChdir(g *WithT) {
 	g.Expect(func() {
 		wd1 := filez.MustGetwd()

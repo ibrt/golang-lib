@@ -3,7 +3,6 @@ package consolez
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 	"sync"
 
@@ -186,12 +185,8 @@ func (c *CLI) Command(cmd string, params ...string) {
 	c.m.Lock()
 	defer c.m.Unlock()
 
-	if filepath.IsAbs(cmd) && strings.HasPrefix(cmd, stringz.EnsureSuffix(filez.MustGetwd(), string(os.PathSeparator))) {
-		cmd = filez.MustRel(filez.MustGetwd(), cmd)
-	}
-
 	fmt.Print(IconRunner)
-	fmt.Printf(" %v ", cmd)
+	fmt.Printf(" %v ", filez.MaybeMustRelIfChild(cmd, filez.MustGetwd()))
 	_, _ = outz.GetColorSecondary().Print(strings.Join(params, " "))
 	fmt.Println()
 }
