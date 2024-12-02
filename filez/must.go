@@ -40,3 +40,8 @@ func MustUserHomeDir() string {
 	errorz.MaybeMustWrap(err)
 	return dirPath
 }
+
+// MustRemoveAll is like os.RemoveAll, but panics on error.
+func MustRemoveAll(path string) {
+	errorz.MaybeMustWrap(os.RemoveAll(path))
+}

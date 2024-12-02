@@ -158,7 +158,7 @@ func (*GoSuite) TestRunGoTests_SelectedPackages(g *WithT, ctrl *gomock.Controlle
 	defer shellz.RestoreDefaultExecutor()
 
 	dirPath := filez.MustCreateTempDir()
-	defer func() { errorz.MaybeMustWrap(os.RemoveAll(dirPath)) }()
+	defer filez.MustRemoveAll(dirPath)
 
 	m.EXPECT().ExecCmdRun(
 		gomock.Any(),
@@ -280,7 +280,7 @@ func (*GoSuite) TestRunGoTests_AllPackages(g *WithT, ctrl *gomock.Controller) {
 	defer shellz.RestoreDefaultExecutor()
 
 	dirPath := filez.MustCreateTempDir()
-	defer func() { errorz.MaybeMustWrap(os.RemoveAll(dirPath)) }()
+	defer filez.MustRemoveAll(dirPath)
 
 	m.EXPECT().ExecCmdRun(
 		gomock.Any(),

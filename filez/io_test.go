@@ -39,7 +39,7 @@ func (*IOSuite) TestFilesAndDirs(g *WithT) {
 
 	{
 		dirPath := filez.MustCreateTempDir()
-		defer func() { errorz.MaybeMustWrap(os.RemoveAll(dirPath)) }()
+		defer filez.MustRemoveAll(dirPath)
 
 		filePath := filez.MustWriteFile(filepath.Join(dirPath, "first"), 0777, 0666, []byte("content"))
 		g.Expect(filez.MustReadFile(filePath)).To(Equal([]byte("content")))

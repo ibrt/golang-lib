@@ -49,3 +49,16 @@ func (*MustSuite) TestMustUserHomeDir(g *WithT) {
 		g.Expect(filez.MustUserHomeDir()).ToNot(BeEmpty())
 	}).ToNot(Panic())
 }
+
+func (*MustSuite) TestMustRemoveAll(g *WithT) {
+	g.Expect(
+		func() {
+			filePath := filez.MustCreateTempFileString("content")
+			filez.MustRemoveAll(filePath)
+			g.Expect(filez.MustCheckFileExists(filePath)).To(BeFalse())
+			filez.MustRemoveAll(filePath)
+		}).
+		ToNot(Panic())
+
+	g.Expect(func() { filez.MustRemoveAll(string([]byte{0})) }).To(Panic())
+}
