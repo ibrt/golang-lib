@@ -3,6 +3,8 @@ package ioz
 import (
 	"io"
 	"sync/atomic"
+
+	"github.com/ibrt/golang-lib/errorz"
 )
 
 var (
@@ -33,4 +35,17 @@ func (c *CountingReader) Read(p []byte) (int, error) {
 // Count returns the number of bytes read.
 func (c *CountingReader) Count() int64 {
 	return c.counter.Load()
+}
+
+// MustReadAll is like io.ReadAll, but panics on error.
+func MustReadAll(r io.Reader) []byte {
+	buf, err := io.ReadAll(r)
+	errorz.MaybeMustWrap(err)
+	return buf
+}
+
+// MustReadAllAndClose is like MustReadAll but also always closes the ReadCloser.
+func MustReadAllAndClose(r io.ReadCloser) []byte {
+	defer errorz.MustClose(r)
+	return MustReadAll(r)
 }
