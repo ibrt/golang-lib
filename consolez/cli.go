@@ -186,7 +186,7 @@ func (c *CLI) Command(cmd string, params ...string) {
 	defer c.m.Unlock()
 
 	fmt.Print(IconRunner)
-	fmt.Printf(" %v ", filez.MaybeMustRelIfChild(cmd, filez.MustGetwd()))
+	fmt.Printf(" %v ", filez.MustRelForDisplay(cmd))
 	_, _ = outz.GetColorSecondary().Print(strings.Join(params, " "))
 	fmt.Println()
 }

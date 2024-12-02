@@ -28,29 +28,8 @@ func (*MustSuite) TestMustRel(g *WithT) {
 	g.Expect(func() {
 		g.Expect(filez.MustRel(filepath.Join("a", "b", "c"), filepath.Join("a", "b"))).To(Equal(".."))
 		g.Expect(filez.MustRel(filepath.Join("a"), filepath.Join("a", "b"))).To(Equal("b"))
-	}).ToNot(Panic())
-}
-
-func (*MustSuite) TestMaybeMustRelIfChild(g *WithT) {
-	g.Expect(func() {
-		g.Expect(
-			filez.MaybeMustRelIfChild(
-				filepath.Join("a", "b", "c"),
-				filepath.Join("a", "b"))).
-			To(Equal(filepath.Join("a", "b", "c")))
-
-		g.Expect(
-			filez.MaybeMustRelIfChild(
-				filez.MustAbs(filepath.Join("a", "b", "c")),
-				filez.MustAbs(filepath.Join("a", "b")))).
-			To(Equal(filepath.Join("c")))
-
-		g.Expect(
-			filez.MaybeMustRelIfChild(
-				filez.MustAbs(filepath.Join("a", "b", "c")),
-				filez.MustAbs(filepath.Join("b", "c")))).
-			To(Equal(filez.MustAbs(filepath.Join("a", "b", "c"))))
-
+		g.Expect(filez.MustRel("", filepath.Join("a", "b"))).To(Equal(filepath.Join("a", "b")))
+		g.Expect(filez.MustRel(filepath.Join("a", "b"), "")).To(Equal(filepath.Join("..", "..")))
 	}).ToNot(Panic())
 }
 
