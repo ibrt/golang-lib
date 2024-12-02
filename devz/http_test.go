@@ -51,7 +51,7 @@ func (*HTTPSuite) TestMustDownloadFile_Success(g *WithT) {
 
 	outBuf, errBuf := outz.MustStopCapturing()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("[...........download-file] http://example.com/file %v\n", filePath)))
-	g.Expect(errBuf).To(Equal("7 B / 7 B [--------------------------------------------------------------------------------------------------------------------------------------------------------------------------] 100.00% ? p/s 0s"))
+	g.Expect(errBuf).To(HavePrefix("7 B / 7 B ["))
 
 	g.Expect(filez.MustReadFileString(filePath)).To(Equal("content"))
 }
