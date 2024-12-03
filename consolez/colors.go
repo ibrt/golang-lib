@@ -1,4 +1,4 @@
-package outz
+package consolez
 
 import (
 	"github.com/fatih/color"

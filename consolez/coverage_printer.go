@@ -6,7 +6,6 @@ import (
 	"github.com/axw/gocov"
 	"github.com/fatih/color"
 
-	"github.com/ibrt/golang-lib/outz"
 	"github.com/ibrt/golang-lib/stringz"
 )
 
@@ -67,15 +66,15 @@ func (p *coveragePrinter) Print(coverage *Coverage) {
 		switch {
 		case pct >= p.higLmt:
 			pfx = "HIGC"
-			clr = outz.GetColorSuccess()
+			clr = GetColorSuccess()
 			higPkgs++
 		case pct >= p.medLmt:
 			pfx = "MEDC"
-			clr = outz.GetColorWarning()
+			clr = GetColorWarning()
 			medPkgs++
 		default:
 			pfx = "LOWC"
-			clr = outz.GetColorError()
+			clr = GetColorError()
 			lowPkgs++
 		}
 

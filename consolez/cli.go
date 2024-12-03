@@ -11,7 +11,6 @@ import (
 
 	"github.com/ibrt/golang-lib/errorz"
 	"github.com/ibrt/golang-lib/filez"
-	"github.com/ibrt/golang-lib/outz"
 	"github.com/ibrt/golang-lib/stringz"
 )
 
@@ -111,7 +110,7 @@ func (c *CLI) Banner(title, tagLine string) {
 
 	fmt.Print("┌", strings.Repeat("─", len(title)+len(tagLine)+6), "┐\n")
 	fmt.Print("│ ", IconRocket, " ")
-	_, _ = outz.GetColorHighlight().Print(title)
+	_, _ = GetColorHighlight().Print(title)
 	fmt.Print(" ")
 	fmt.Print(tagLine)
 	fmt.Print(" │\n")
@@ -132,7 +131,7 @@ func (c *CLI) Header(format string, a ...any) func() {
 	case 0:
 		fmt.Print(IconHighVoltage)
 		fmt.Print(" ")
-		_, _ = outz.GetColorHighlight().Printf(format, a...)
+		_, _ = GetColorHighlight().Printf(format, a...)
 		fmt.Println()
 	case 1:
 		fmt.Print(IconBackhandIndexPointingRight)
@@ -140,8 +139,8 @@ func (c *CLI) Header(format string, a ...any) func() {
 		fmt.Printf(format, a...)
 		fmt.Println()
 	default:
-		_, _ = outz.GetColorSecondaryHighlight().Print("—— ")
-		_, _ = outz.GetColorSecondaryHighlight().Printf(format, a...)
+		_, _ = GetColorSecondaryHighlight().Print("—— ")
+		_, _ = GetColorSecondaryHighlight().Printf(format, a...)
 		fmt.Println()
 	}
 
@@ -170,11 +169,11 @@ func (c *CLI) Notice(scope string, highlight string, secondary ...string) {
 	c.m.Lock()
 	defer c.m.Unlock()
 
-	_, _ = outz.GetColorSecondary().Printf("[%v]", stringz.AlignRight(scope, 24))
-	_, _ = outz.GetColorDefault().Print(" ", highlight)
+	_, _ = GetColorSecondary().Printf("[%v]", stringz.AlignRight(scope, 24))
+	_, _ = GetColorDefault().Print(" ", highlight)
 
 	for _, v := range secondary {
-		_, _ = outz.GetColorSecondary().Print(" ", v)
+		_, _ = GetColorSecondary().Print(" ", v)
 	}
 
 	fmt.Println()
@@ -187,7 +186,7 @@ func (c *CLI) Command(cmd string, params ...string) {
 
 	fmt.Print(IconRunner)
 	fmt.Printf(" %v ", filez.MustRelForDisplay(cmd))
-	_, _ = outz.GetColorSecondary().Print(strings.Join(params, " "))
+	_, _ = GetColorSecondary().Print(strings.Join(params, " "))
 	fmt.Println()
 }
 
@@ -195,8 +194,8 @@ func (c *CLI) Command(cmd string, params ...string) {
 func (c *CLI) NewTable(columnHeaders ...any) table.Table {
 	return table.
 		New(columnHeaders...).
-		WithHeaderFormatter(outz.GetColorHighlight().SprintfFunc()).
-		WithFirstColumnFormatter(outz.GetColorWarning().SprintfFunc())
+		WithHeaderFormatter(GetColorHighlight().SprintfFunc()).
+		WithFirstColumnFormatter(GetColorWarning().SprintfFunc())
 }
 
 // Error prints an error.
@@ -207,8 +206,8 @@ func (c *CLI) Error(err error, debug bool) {
 	fmt.Println()
 	fmt.Print(IconCollision)
 	fmt.Print(" ")
-	_, _ = outz.GetColorHighlight().Println("Error")
-	_, _ = outz.GetColorError().Println(err.Error())
+	_, _ = GetColorHighlight().Println("Error")
+	_, _ = GetColorError().Println(err.Error())
 
 	if debug {
 		fmt.Println(errorz.SDump(err))
