@@ -1,4 +1,4 @@
-package outz_test
+package fixturez_test
 
 import (
 	"fmt"
@@ -8,7 +8,6 @@ import (
 	. "github.com/onsi/gomega"
 
 	"github.com/ibrt/golang-lib/fixturez"
-	"github.com/ibrt/golang-lib/outz"
 )
 
 type OutputSuite struct {
@@ -20,26 +19,26 @@ func TestOutputSuite(t *testing.T) {
 }
 
 func (*OutputSuite) TestOutputCapture(g *WithT) {
-	defer outz.ResetOutputCapture()
-	defer outz.ResetOutputCapture()
+	defer fixturez.ResetOutputCapture()
+	defer fixturez.ResetOutputCapture()
 
-	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	fixturez.MustBeginOutputCapture(fixturez.OutputSetupStandard, fixturez.GetOutputSetupColor(false), fixturez.OutputSetupTable)
 
 	g.Expect(fmt.Fprint(os.Stdout, "<out>")).Error().To(Succeed())
 	g.Expect(fmt.Fprint(os.Stderr, "<err>")).Error().To(Succeed())
 
-	outBuf, errBuf := outz.MustEndOutputCapture()
+	outBuf, errBuf := fixturez.MustEndOutputCapture()
 
 	g.Expect(outBuf).To(Equal("<out>"))
 	g.Expect(errBuf).To(Equal("<err>"))
 
 	g.Expect(func() {
-		outz.ResetOutputCapture()
+		fixturez.ResetOutputCapture()
 	}).ToNot(Panic())
 }
 
 func (*OutputSuite) TestResetOutputCapture(_ *WithT) {
-	defer outz.ResetOutputCapture()
-	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer fixturez.ResetOutputCapture()
+	fixturez.MustBeginOutputCapture(fixturez.OutputSetupStandard, fixturez.GetOutputSetupColor(false), fixturez.OutputSetupTable)
 	fmt.Println("ignored")
 }

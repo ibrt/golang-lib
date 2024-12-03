@@ -9,7 +9,6 @@ import (
 
 	"github.com/ibrt/golang-lib/consolez"
 	"github.com/ibrt/golang-lib/fixturez"
-	"github.com/ibrt/golang-lib/outz"
 )
 
 type GoTestPrinterSuite struct {
@@ -21,8 +20,8 @@ func TestGoTestPrinterSuite(t *testing.T) {
 }
 
 func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
-	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
-	defer outz.ResetOutputCapture()
+	fixturez.MustBeginOutputCapture(fixturez.OutputSetupStandard, fixturez.GetOutputSetupColor(false), fixturez.OutputSetupTable)
+	defer fixturez.ResetOutputCapture()
 
 	p := consolez.NewGoTestPrinter()
 	p.PrintLine("other")
@@ -49,7 +48,7 @@ func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
 	p.PrintLine(fmt.Sprintf("FAIL\t%v\t1s", strings.Repeat("p", 1024)))
 	p.PrintDone()
 
-	outBuf, errBuf := outz.MustEndOutputCapture()
+	outBuf, errBuf := fixturez.MustEndOutputCapture()
 
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
 		"other",

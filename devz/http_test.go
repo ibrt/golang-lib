@@ -11,7 +11,6 @@ import (
 	"github.com/ibrt/golang-lib/devz"
 	"github.com/ibrt/golang-lib/filez"
 	"github.com/ibrt/golang-lib/fixturez"
-	"github.com/ibrt/golang-lib/outz"
 )
 
 type HTTPSuite struct {
@@ -44,12 +43,12 @@ func (*HTTPSuite) TestMustDownloadFile_Success(g *WithT) {
 	filePath := filez.MustCreateTempFileString("")
 	defer filez.MustRemoveAll(filePath)
 
-	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(true), outz.OutputSetupTable)
-	defer outz.ResetOutputCapture()
+	fixturez.MustBeginOutputCapture(fixturez.OutputSetupStandard, fixturez.GetOutputSetupColor(true), fixturez.OutputSetupTable)
+	defer fixturez.ResetOutputCapture()
 
 	g.Expect(func() { devz.MustDownloadFile("http://example.com/file", filePath) }).ToNot(Panic())
 
-	outBuf, errBuf := outz.MustEndOutputCapture()
+	outBuf, errBuf := fixturez.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("[...........download-file] http://example.com/file %v\n", filePath)))
 	g.Expect(errBuf).To(HavePrefix("7 B / 7 B ["))
 
@@ -67,8 +66,8 @@ func (*HTTPSuite) TestMustDownloadFile_Error(g *WithT) {
 	filePath := filez.MustCreateTempFileString("")
 	defer filez.MustRemoveAll(filePath)
 
-	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(true), outz.OutputSetupTable)
-	defer outz.ResetOutputCapture()
+	fixturez.MustBeginOutputCapture(fixturez.OutputSetupStandard, fixturez.GetOutputSetupColor(true), fixturez.OutputSetupTable)
+	defer fixturez.ResetOutputCapture()
 
 	g.Expect(
 		func() {
@@ -76,7 +75,7 @@ func (*HTTPSuite) TestMustDownloadFile_Error(g *WithT) {
 		}).
 		To(PanicWith(MatchError("download error for URL \"http://example.com/file\": HTTP 404: content")))
 
-	outBuf, errBuf := outz.MustEndOutputCapture()
+	outBuf, errBuf := fixturez.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("[...........download-file] http://example.com/file %v\n", filePath)))
 	g.Expect(errBuf).To(Equal(""))
 

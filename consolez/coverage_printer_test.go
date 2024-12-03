@@ -9,7 +9,6 @@ import (
 
 	"github.com/ibrt/golang-lib/consolez"
 	"github.com/ibrt/golang-lib/fixturez"
-	"github.com/ibrt/golang-lib/outz"
 )
 
 type CoveragePrinterSuite struct {
@@ -21,8 +20,8 @@ func TestCoveragePrinterSuite(t *testing.T) {
 }
 
 func (*CoveragePrinterSuite) TestCoveragePrinter(g *WithT) {
-	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
-	defer outz.ResetOutputCapture()
+	fixturez.MustBeginOutputCapture(fixturez.OutputSetupStandard, fixturez.GetOutputSetupColor(false), fixturez.OutputSetupTable)
+	defer fixturez.ResetOutputCapture()
 
 	consolez.NewCoveragePrinter().Print(&consolez.Coverage{
 		Packages: []*gocov.Package{
@@ -84,7 +83,7 @@ func (*CoveragePrinterSuite) TestCoveragePrinter(g *WithT) {
 		},
 	})
 
-	outBuf, errBuf := outz.MustEndOutputCapture()
+	outBuf, errBuf := fixturez.MustEndOutputCapture()
 
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
 		"\x1b[91mLOWC    lowp                                                          25.0% [1/4]\x1b[0m",
@@ -100,8 +99,8 @@ func (*CoveragePrinterSuite) TestCoveragePrinter(g *WithT) {
 }
 
 func (*CoveragePrinterSuite) TestCoveragePrinterNoStatements(g *WithT) {
-	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
-	defer outz.ResetOutputCapture()
+	fixturez.MustBeginOutputCapture(fixturez.OutputSetupStandard, fixturez.GetOutputSetupColor(false), fixturez.OutputSetupTable)
+	defer fixturez.ResetOutputCapture()
 
 	consolez.NewCoveragePrinter().Print(&consolez.Coverage{
 		Packages: []*gocov.Package{
@@ -116,7 +115,7 @@ func (*CoveragePrinterSuite) TestCoveragePrinterNoStatements(g *WithT) {
 		},
 	})
 
-	outBuf, errBuf := outz.MustEndOutputCapture()
+	outBuf, errBuf := fixturez.MustEndOutputCapture()
 
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
 		"\x1b[32mHIGC    nostm                                                        100.0% [0/0]\x1b[0m",
