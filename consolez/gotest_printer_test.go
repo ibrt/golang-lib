@@ -21,8 +21,8 @@ func TestGoTestPrinterSuite(t *testing.T) {
 }
 
 func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	p := consolez.NewGoTestPrinter()
 	p.PrintLine("other")
@@ -49,7 +49,7 @@ func (*GoTestPrinterSuite) TestGoTestPrinter(g *WithT) {
 	p.PrintLine(fmt.Sprintf("FAIL\t%v\t1s", strings.Repeat("p", 1024)))
 	p.PrintDone()
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
 		"other",

@@ -44,8 +44,18 @@ func MustReadAll(r io.Reader) []byte {
 	return buf
 }
 
+// MustReadAllString is like MustReadAll, but returns a string.
+func MustReadAllString(r io.Reader) string {
+	return string(MustReadAll(r))
+}
+
 // MustReadAllAndClose is like MustReadAll but also always closes the ReadCloser.
 func MustReadAllAndClose(r io.ReadCloser) []byte {
 	defer errorz.MustClose(r)
 	return MustReadAll(r)
+}
+
+// MustReadAllAndCloseString is like MustReadAllAndClose, but returns a string.
+func MustReadAllAndCloseString(r io.ReadCloser) string {
+	return string(MustReadAllAndClose(r))
 }

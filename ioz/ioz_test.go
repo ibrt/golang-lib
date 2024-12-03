@@ -59,6 +59,15 @@ func (*Suite) TestMustReadAll(g *WithT) {
 		To(PanicWith(MatchError("test error")))
 }
 
+func (*Suite) TestMustReadAllString(g *WithT) {
+	g.Expect(func() {
+		g.Expect(ioz.MustReadAllString(strings.NewReader("r"))).To(Equal("r"))
+	}).ToNot(Panic())
+
+	g.Expect(func() { ioz.MustReadAllString(iotest.ErrReader(fmt.Errorf("test error"))) }).
+		To(PanicWith(MatchError("test error")))
+}
+
 func (*Suite) TestMustReadAllAndClose(g *WithT) {
 	g.Expect(
 		func() {
@@ -77,6 +86,28 @@ func (*Suite) TestMustReadAllAndClose(g *WithT) {
 	{
 		rc := &readCloser{r: strings.NewReader("r"), closeErr: fmt.Errorf("close error")}
 		g.Expect(func() { ioz.MustReadAllAndClose(rc) }).To(PanicWith(MatchError("close error")))
+		g.Expect(rc.isClosed).To(BeTrue())
+	}
+}
+
+func (*Suite) TestMustReadAllAndCloseString(g *WithT) {
+	g.Expect(
+		func() {
+			rc := &readCloser{r: strings.NewReader("r")}
+			g.Expect(ioz.MustReadAllAndCloseString(rc)).To(Equal("r"))
+			g.Expect(rc.isClosed).To(BeTrue())
+		}).
+		ToNot(Panic())
+
+	{
+		rc := &readCloser{r: iotest.ErrReader(fmt.Errorf("test error"))}
+		g.Expect(func() { ioz.MustReadAllAndCloseString(rc) }).To(PanicWith(MatchError("test error")))
+		g.Expect(rc.isClosed).To(BeTrue())
+	}
+
+	{
+		rc := &readCloser{r: strings.NewReader("r"), closeErr: fmt.Errorf("close error")}
+		g.Expect(func() { ioz.MustReadAllAndCloseString(rc) }).To(PanicWith(MatchError("close error")))
 		g.Expect(rc.isClosed).To(BeTrue())
 	}
 }

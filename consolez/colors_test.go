@@ -19,8 +19,8 @@ func TestColorsSuite(t *testing.T) {
 }
 
 func (s *ColorsSuite) TestColors(g *WithT) {
-	outz.MustStartCapturing(outz.GetSetupColorStreams(false))
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.GetOutputSetupColor(false))
+	defer outz.ResetOutputCapture()
 
 	g.Expect(consolez.GetColorDefault().Print("default")).Error().To(Succeed())
 	g.Expect(consolez.GetColorHighlight().Print("highlight")).Error().To(Succeed())
@@ -31,7 +31,7 @@ func (s *ColorsSuite) TestColors(g *WithT) {
 	g.Expect(consolez.GetColorWarning().Print("warning")).Error().To(Succeed())
 	g.Expect(consolez.GetColorError().Print("error")).Error().To(Succeed())
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal("\x1b[0mdefault\x1b[0m\x1b[1mhighlight\x1b[0m\x1b[1;2msecondaryHighlight\x1b[0m\x1b[2msecondary\x1b[0m\x1b[36minfo\x1b[0m\x1b[32msuccess\x1b[0m\x1b[33mwarning\x1b[0m\x1b[91merror\x1b[0m"))
 	g.Expect(errBuf).To(BeEmpty())
 }

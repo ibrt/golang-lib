@@ -36,30 +36,30 @@ func (*CLISuite) TestTool(g *WithT) {
 	kCtx, err := k.Parse([]string{"--flag=flag-value", "command", "arg-value"})
 	g.Expect(err).To(Succeed())
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	consolez.DefaultCLI.Tool("Tool", kCtx)
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("┌─────────────────┐\n│ %v \x1b[1mTool\x1b[0m command │\n└─────────────────┘\n\n\x1b[1mInput          Value       \n\x1b[22m\x1b[33m--flag=STRING  \x1b[0mflag-value  \n\x1b[33m<arg>          \x1b[0marg-value   \n", consolez.IconRocket)))
 	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestBanner(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	consolez.DefaultCLI.Banner("Title", "tagline")
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("┌──────────────────┐\n│ %v \x1b[1mTitle\x1b[0m tagline │\n└──────────────────┘\n", consolez.IconRocket)))
 	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestHeader(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	f1 := consolez.DefaultCLI.Header("H1 %v", 1)
 	f2 := consolez.DefaultCLI.Header("H2 %v", 1)
@@ -76,7 +76,7 @@ func (*CLISuite) TestHeader(g *WithT) {
 
 	f1()
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 
 	g.Expect(outBuf).To(Equal(strings.Join(
 		[]string{
@@ -91,8 +91,8 @@ func (*CLISuite) TestHeader(g *WithT) {
 }
 
 func (*CLISuite) TestWithHeader(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	consolez.DefaultCLI.WithHeader(
 		"H1 %v", []any{1},
@@ -119,7 +119,7 @@ func (*CLISuite) TestWithHeader(g *WithT) {
 			// intentionally empty
 		})
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 
 	g.Expect(outBuf).To(Equal(strings.Join(
 		[]string{
@@ -134,67 +134,67 @@ func (*CLISuite) TestWithHeader(g *WithT) {
 }
 
 func (*CLISuite) TestNotice(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	consolez.DefaultCLI.Notice("scope", "p1", "p2", "p3")
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal("\x1b[2m[...................scope]\x1b[0m\x1b[0m p1\x1b[0m\x1b[2m p2\x1b[0m\x1b[2m p3\x1b[0m\n"))
 	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestCommand_Rel(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	consolez.DefaultCLI.Command("cmd", "p1", "p2")
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cmd \x1b[2mp1 p2\x1b[0m\n", consolez.IconRunner)))
 	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestCommand_Abs(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	consolez.DefaultCLI.Command(filez.MustAbs("cmd"), "p1", "p2")
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("%v cmd \x1b[2mp1 p2\x1b[0m\n", consolez.IconRunner)))
 	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestNewTable(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	consolez.DefaultCLI.NewTable("A", "B").AddRow("a", "b").Print()
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal("\x1b[1mA  B  \n\x1b[22m\x1b[33ma  \x1b[0mb  \n"))
 	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestError_DebugFalse(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	consolez.DefaultCLI.Error(fmt.Errorf("test error"), false)
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest error\x1b[0m\n", consolez.IconCollision)))
 	g.Expect(errBuf).To(BeEmpty())
 }
 
 func (*CLISuite) TestError_DebugTrue(g *WithT) {
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	consolez.DefaultCLI.Error(fmt.Errorf("test error"), true)
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(HavePrefix(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest error\x1b[0m\n(errorz.dump)", consolez.IconCollision)))
 	g.Expect(errBuf).To(BeEmpty())
 }
@@ -205,11 +205,11 @@ func (*CLISuite) TestRecover(g *WithT) {
 			g.Expect(code).To(Equal(1))
 		}))
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(false), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(false), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	defer func() {
-		outBuf, errBuf := outz.MustStopCapturing()
+		outBuf, errBuf := outz.MustEndOutputCapture()
 		g.Expect(outBuf).To(HavePrefix(fmt.Sprintf("\n%v \x1b[1mError\x1b[22m\n\x1b[91mtest panic\x1b[0m\n(errorz.dump)", consolez.IconCollision)))
 		g.Expect(errBuf).To(BeEmpty())
 	}()

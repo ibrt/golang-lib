@@ -123,15 +123,15 @@ func (*GoSuite) TestRunGoChecks(g *WithT, ctrl *gomock.Controller) {
 		Times(1).
 		Return(nil)
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(true), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(true), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	devz.MustRunGoChecks(&devz.GoChecksParams{
 		AllPackages: []string{"./..."},
 		BuildTags:   []string{"t1", "t2"},
 	})
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
 		"[...............go-checks] preparing...",
 		"🏃 go mod tidy",
@@ -240,8 +240,8 @@ func (*GoSuite) TestRunGoTests_SelectedPackages(g *WithT, ctrl *gomock.Controlle
 		Times(1).
 		Return(nil)
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(true), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(true), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	devz.MustRunGoTests(&devz.GoTestsParams{
 		AllPackages:      []string{"./..."},
@@ -254,7 +254,7 @@ func (*GoSuite) TestRunGoTests_SelectedPackages(g *WithT, ctrl *gomock.Controlle
 		OpenCoverage:     true,
 	})
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
 		"[................go-tests] preparing coverage directory...",
 		"[................go-tests] generating Go code...",
@@ -362,8 +362,8 @@ func (*GoSuite) TestRunGoTests_AllPackages(g *WithT, ctrl *gomock.Controller) {
 		Times(1).
 		Return(nil)
 
-	outz.MustStartCapturing(outz.SetupStandardStreams, outz.GetSetupColorStreams(true), outz.SetupTableStreams)
-	defer outz.MustResetCapturing()
+	outz.MustBeginOutputCapture(outz.OutputSetupStandard, outz.GetOutputSetupColor(true), outz.OutputSetupTable)
+	defer outz.ResetOutputCapture()
 
 	devz.MustRunGoTests(&devz.GoTestsParams{
 		AllPackages:      []string{"./..."},
@@ -376,7 +376,7 @@ func (*GoSuite) TestRunGoTests_AllPackages(g *WithT, ctrl *gomock.Controller) {
 		OpenCoverage:     true,
 	})
 
-	outBuf, errBuf := outz.MustStopCapturing()
+	outBuf, errBuf := outz.MustEndOutputCapture()
 	g.Expect(outBuf).To(Equal(strings.Join([]string{
 		"[................go-tests] preparing coverage directory...",
 		"[................go-tests] generating Go code...",
